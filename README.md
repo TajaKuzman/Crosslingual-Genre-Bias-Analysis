@@ -166,3 +166,21 @@ Accuracy: 0.934
 | Information/Explanation |    0.9      | 0.9      |   0.9      | 10        |
 | Instruction             |    0.888889 | 0.8      |   0.842105 | 10        |
 | Prose/Lyrical           |    1        | 1        |   1        | 10        |
+
+## Improved sample evaluation - comparison with the first run
+
+I re-did the evaluation on the same dataset, but after some improvements: the text was clearly separated into paragraphs -> texts are much more comprehensible and easier to understand; I used the doccano annotation platform -> easier and (slightly) faster annotation.
+
+When I compared my annotations from the two runs, there were disagreements between the labels in 40 instances - 15% of instances.
+
+The reasons for the differences:
+
+| reason | frequency (# instances) |
+|---|---|
+| improved second run (text annotated with a label, instead of "problematic") | 8 |
+| detected "multiple texts" that I didn't in the first run | 9 |
+| inter-annotator disagreement | 23 |
+
+So we can see that the improved methodology (better shown texts, using doccano and paragraph structure) improved annotation of 17 cases - 6% of all texts (either we were able to annotate texts that were previously incomprehensible, or we detected problematic texts that we previously didn't due to the lacking text structure).
+
+In 23 instances (9%), there was inter-annotator disagreement, which shows the level of difficulty of this task. However, 8 of these cases appeared when annotating texts that were predicted as "Other", which we decided that we won't include in the annotation campaign anyway. If we disregard these cases, disagreement happened in 15 instances - 6% of texts.
