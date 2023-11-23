@@ -120,3 +120,81 @@ def extract_genre_sample(sample_path):
 sample_path = "{}-sample.txt".format(corpus_path)
 
 sample_df = extract_genre_sample(sample_path)
+
+lang = corpus_path.split(".")[1]
+
+sample_paths = {lang: sample_path}
+
+def genre_sample_to_json(sample_paths, lang):
+	""" Convert genre sample in TXT to JSON and add translations and paragraph structure.
+	
+		Args:
+		- sample_paths: path to a file, created with the function extract_genre_sample
+		- lang: hr, mk, sl"""
+	
+	sample_df = pd.read_csv(sample_paths[lang], sep="\t", index_col = 0)
+
+	# Change <p> signs to actual new lines
+	sample_df["text"] = sample_df["text"].str.replace("<p>", "\n\n")
+
+
+	# Apply Google Translate and machine translate the data
+	import googletrans
+	from googletrans import Translator
+
+	# Define the translation model
+	translator = Translator()
+
+	# Create the final list
+	translation_GT = []
+
+	sentence_list = sample_df["text"].to_list()
+
+	print("Starting translation.")
+
+	# Loop through the list of original sentences,
+	# translate each and append the translation to the final list
+	for i in sentence_list:
+		# Translate the sentence from Slovene (src = "sl") to English (dest = "en")
+			current_translation = translator.translate(i, src = lang, dest='en')
+		# Append the translated sentence to the final list
+			translation_GT.append(current_translation.text)
+
+	print("Translation finished.")
+
+	# Append translations to the sample
+
+	sample_df["translation"] = translation_GT
+
+	# Save to JSON lines
+	sample_df.to_json("datasets/CLASSLA-web.{}.1.0.-translated-genre-sample.jsonl".format(lang), orient="records", lines=True)
+
+	print("Final file saved as datasets/CLASSLA-web.{}.1.0.-translated-genre-sample.jsonl".format(lang))
+
+	# Create also a version for the annotation tool, only with translation and labels
+	ann_df = sample_df[["translation","genre"]]
+
+	# For annotation, each label should be in a list
+	ann_df["genre"] = ann_df["genre"].apply(lambda x:[x])
+
+	# Rename df
+	ann_df.columns = ["text", "label"]
+
+	# Add metadata
+	text_ids = sample_df["text_id"].to_list()
+	domains = sample_df["domain"].to_list()
+
+	metadata_list = []
+
+	for i in list(zip(text_ids,domains)):
+		metadata = {"text_id": i[0], "domain": i[1]}
+		metadata_list.append(metadata)
+
+	ann_df["metadata"] = metadata_list
+
+	# Save to JSON lines
+	ann_df.to_json("datasets/CLASSLA-web.{}.1.0.-translated-genre-sample-for-annotation.jsonl".format(lang), orient="records", lines=True)
+
+	print("File for annotation saved as datasets/CLASSLA-web.{}.1.0.-translated-genre-sample-for-annotation.jsonl".format(lang))
+
+	return sample_df
