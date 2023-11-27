@@ -14,7 +14,7 @@ The manually annotated samples are *annotations/sample-evaluation-annotation-run
 
 For the sample, I randomly sampled 10 instances of each of the genre classes -> 90 instances per corpus. I included "Other" as the label in the sample. However, as this label is mostly used so that the classifier can use it for harder examples, when doing manual annotation, I tried to identify the actual label of these texts, so most of texts, labelled Other, were manually annotated as something else.
 
-I evaluated three corpora: CLASSLA-web.sl, CLASSLA-web.hr and CLASSLA-web.mk.
+I evaluated three corpora: CLASSLA-web.sl, CLASSLA-web.hr and CLASSLA-web.mk. After the two rounds of evaluation of these three corpora, I also evaluated the Albanian corpus: MaCoCu-sq.
 
 Code for evaluation: `evaluation-of-annotation.ipynb`
 
@@ -87,16 +87,32 @@ Corpus: sl
 | Opinion/Argumentation   |       7 |
 | Other                   |       3 |
 
+Corpus: sq
 
-7-8% of texts were annotated to be problematic ("multiple texts") - mostly, they were not a coherent text (just a list of summaries, multiple texts concatenated).
+| y_true                  |   count |
+|:------------------------|--------:|
+| Information/Explanation |      15 |
+| Opinion/Argumentation   |      11 |
+| Prose/Lyrical           |      11 |
+| Forum                   |      10 |
+| Legal                   |       9 |
+| Instruction             |       9 |
+| News                    |       8 |
+| Promotion               |       8 |
+| Other                   |       4 |
+| Multiple texts  (3%)        |       3 |
+| Incomprehensible (2%)       |       2 |
+
+
+7-8% of texts were annotated to be problematic ("multiple texts") - mostly, they were not a coherent text (just a list of summaries, multiple texts concatenated). In Albanian, the situation is a bit different: there were less problematic ("multiple texts") texts - only 3%. However, in Albanian sample, there were also some incomprehensible texts - probably due to bad machine translation - 2% of texts.
 
 Secondly, in most cases, I manually annotated the category Other as some other, more concrete label.
 
-For calculating the metrics of classifier's performance, I will thus remove "Other" texts and "Multiple texts" texts from the sample.
+For calculating the metrics of classifier's performance, I will thus remove "Other" texts and "Multiple texts" (also "Incomprehensible" in case of Albanian) texts from the sample.
 
 ### Comparing y_true and y_pred with F1 scores
 
-In the evaluation, we compare only the predictions of 8 labels - not including "Other". In addition, I had to remove texts that I could not manually annotate (they were not coherent texts). Final evaluated sample consists of 223 instances.
+In the evaluation, we compare only the predictions of 8 labels - not including "Other". In addition, I had to remove texts that I could not manually annotate (they were not coherent texts). Final evaluated sample consists of 223 instances (hr, sl and mk).
 
 Frequency of predicted labels after removal of "Other" and "Problematic" texts:
 
@@ -139,7 +155,27 @@ Corpus: sl
 | Information/Explanation |       9 |
 | News                    |       8 |
 
+Corpus: sq
+
+| y_pred                  |   count |
+|:------------------------|--------:|
+| Opinion/Argumentation   |      10 |
+| Legal                   |      10 |
+| News                    |      10 |
+| Instruction             |      10 |
+| Prose/Lyrical           |       9 |
+| Promotion               |       9 |
+| Information/Explanation |       8 |
+| Forum                   |       7 |
+
 **Results**
+
+| Dataset        | Macro F1 | Micro F1 |
+|----------------|----------|----------|
+| CLASSLA.web-sl | 0.94     | 0.95     |
+| CLASSLA.web-hr | 0.89     | 0.89     |
+| CLASSLA.web-mk | 0.93     | 0.93     |
+| CLASSLA.web-sq | 0.87     | 0.86     |
 
 The top three labels with the lowest F1 score (in each dataset) are marked with bold.
 
@@ -190,3 +226,17 @@ Macro f1: 0.932, Micro f1: 0.933, Accuracy: 0.933
 | Legal                   |    1        | 0.9      |   0.947368 | 10        |
 | Information/Explanation |    1        | 0.909091 |   0.952381 | 11        |
 
+**Corpus: CLASSLA.web-sq**
+
+Macro f1: 0.865, Micro f1: 0.863, Accuracy: 0.863
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Opinion/Argumentation   |    0.857143 | 0.857143 |   0.857143 |  7        |
+| **Legal**                   |    1        | 0.615385 |   0.761905 | 13        |
+| News                    |    0.9      | 1        |   0.947368 |  9        |
+| Prose/Lyrical           |    0.9      | 1        |   0.947368 |  9        |
+| Forum                   |    0.8      | 1        |   0.888889 |  8        |
+| **Information/Explanation** |    0.7      | 0.777778 |   0.736842 |  9        |
+| Promotion               |    0.888889 | 1        |   0.941176 |  8        |
+| **Instruction**             |    0.888889 | 0.8      |   0.842105 | 10        |
