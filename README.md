@@ -1,5 +1,14 @@
 # Analysis of genre prediction in CLASSLA-web corpora
 
+## Automatically annotated MaCoCu corpora
+
+For automatic annotation, we only annotate texts that are longer (or the same size) than 75 words. Furthermore, due to model's limitations, we only take the first 512 words of each text (because the max_sequence_length that model can take is 512 tokens).
+
+See the [spreadsheet CLASSLA genres](https://docs.google.com/spreadsheets/d/1-jZW_lEAyCdI-tcywjUJUgBgu46jr2el1AgFOGYUxyU/edit?usp=sharing) for all sizes and genre distributions. 
+
+We use the code `1-select_for_xgenre.py` and `2-predict_extended.py` in `/cache/tajak/macocu-mt` (kt-gpu2) (see the README.md file in this directory). The annotated datasets are saved in `/cache/tajak/macocu-mt/datasets/annotated`.
+
+
 ## Sample preparation for manual evaluation
 
 - Run: `CUDA_VISIBLE_DEVICES=0 python vert-to-txt-genre-sample.py corpus.vert.gz` - specify the corpus name. This code parses the first 100,000 texts in the corpus and the randomly samples out 10 instances of each of genre classes. Before sampling, we filter out texts, longer than 500 words. It saves the sample as a tab-separated TXT. Then it takes the TXT text, applies google translate over it and saves the text as JSONL, prepared to be imported to the Doccano annotation tool (as a file `datasets/CLASSLA-web.{lang}.1.0.-translated-genre-sample-for-annotation.jsonl`)
