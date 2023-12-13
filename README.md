@@ -14,7 +14,108 @@ The manually annotated samples are:
 - *annotations/sample-evaluation-annotation-run1.tsv* and *annotations/manual-genre-evaluation-run2.tsv* - done on Slovenian, Croatian, Macedonian and Albanian
 - */cache/tajak/macocu-mt/datasets/manually-evaluated/MaCoCu-mt-genre-sample-evaluated.jsonl* - Maltese
 
-Code for evaluation pf results: `evaluation-of-annotation.ipynb`
+Code for evaluation of results: `evaluation-of-annotation.ipynb`
+
+### Results
+
+| Dataset        | Macro F1 | Micro F1 |
+|----------------|----------|----------|
+| CLASSLA.web-sl | 0.943     | 0.946     |
+| CLASSLA.web-hr | 0.888     | 0.892     |
+| CLASSLA.web-mk | 0.932     | 0.932     |
+| CLASSLA.web-sq | 0.865     | 0.863     |
+| MaCoCu-mt | 0.555     | 0.615     |
+
+The top three labels with the lowest F1 score (in each dataset) are marked with bold.
+
+### CLASSLA.web-sl
+
+Macro f1: 0.943, Micro f1: 0.946, Accuracy: 0.946
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |    1        | 1        |   1        | 10        |
+| **Information/Explanation** |    0.888889 | 1        |   0.941176 |  8        |
+| Instruction             |    1        | 1        |   1        |  9        |
+| Legal                   |    1        | 0.909091 |   0.952381 | 11        |
+| **News**                    |    1        | 0.888889 |   0.941176 |  9        |
+| **Opinion/Argumentation**   |    0.666667 | 1        |   0.8      |  6        |
+| Promotion               |    1        | 1        |   1        |  9        |
+| **Prose/Lyrical**           |    1        | 0.833333 |   0.909091 | 12        |
+
+![](figures/CLASSLA-sl-evaluation.png)
+
+### Corpus: CLASSLA.web-hr
+
+Macro f1: 0.888, Micro f1: 0.892, Accuracy: 0.892
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |    1        | 0.833333 |   0.909091 | 12        |
+| Information/Explanation |    1        | 0.888889 |   0.941176 |  9        |
+| **Instruction**             |    0.625    | 1        |   0.769231 |  5        |
+| Legal                   |    1        | 1        |   1        |  9        |
+| News                    |    0.9      | 1        |   0.947368 |  9        |
+| **Opinion/Argumentation**   |    0.7      | 0.875    |   0.777778 |  8        |
+| Promotion               |    1        | 0.818182 |   0.9      | 11        |
+| **Prose/Lyrical**           |    0.9      | 0.818182 |   0.857143 | 11        |
+
+![](figures/CLASSLA-hr-evaluation.png)
+
+### Corpus: CLASSLA.web-mk
+
+Macro f1: 0.932, Micro f1: 0.933, Accuracy: 0.933
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |    1        | 1        |   1        |  9        |
+| **Information/Explanation** |    0.8      | 1        |   0.888889 |  8        |
+| Instruction             |    1        | 1        |   1        |  9        |
+| Legal                   |    0.9      | 1        |   0.947368 |  9        |
+| **News**                    |    1        | 0.818182 |   0.9      | 11        |
+| **Opinion/Argumentation**   |    0.777778 | 0.875    |   0.823529 |  8        |
+| Promotion               |    1        | 0.9      |   0.947368 | 10        |
+| Prose/Lyrical           |    1        | 0.909091 |   0.952381 | 11        |
+
+
+![](figures/CLASSLA-mk-evaluation.png)
+
+### Corpus: MaCoCu-sq
+
+Macro f1: 0.865, Micro f1: 0.863, Accuracy: 0.863
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| **Forum**                   |    0.857143 | 0.857143 |   0.857143 |  7        |
+| **Information/Explanation** |    1        | 0.615385 |   0.761905 | 13        |
+| Instruction             |    0.9      | 1        |   0.947368 |  9        |
+| Legal                   |    0.9      | 1        |   0.947368 |  9        |
+| News                    |    0.8      | 1        |   0.888889 |  8        |
+| **Opinion/Argumentation**   |    0.7      | 0.777778 |   0.736842 |  9        |
+| Promotion               |    0.888889 | 1        |   0.941176 |  8        |
+| Prose/Lyrical           |    0.888889 | 0.8      |   0.842105 | 10        |
+
+![](figures/MaCoCu-sq-evaluation.png)
+
+
+### Corpus: MaCoCu-mt
+
+Macro f1: 0.555, Micro f1: 0.615, Accuracy: 0.615
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| **Forum**                   |    0.1      | 1        |   0.181818 |  1        |
+| Information/Explanation |    0.6      | 0.461538 |   0.521739 | 13        |
+| Instruction             |    1        | 0.5      |   0.666667 | 18        |
+| Legal                   |    1        | 1        |   1        | 10        |
+| News                    |    0.9      | 0.6      |   0.72     | 15        |
+| **Opinion/Argumentation**   |    0.3      | 0.375    |   0.333333 |  8        |
+| Promotion               |    0.9      | 0.75     |   0.818182 | 12        |
+| **Prose/Lyrical**           |    0.111111 | 1        |   0.2      |  1        |
+
+![](figures/MaCoCu-mt-evaluation.png)
+
+## More information on sample evaluation
 
 ### First batch of languages: Slovenian, Croatian, Macedonian and Albanian
 
@@ -180,104 +281,6 @@ Corpus: mt
 | Prose/Lyrical           |       9 |
 | Instruction             |       9 |
 
-#### Results
-
-| Dataset        | Macro F1 | Micro F1 |
-|----------------|----------|----------|
-| CLASSLA.web-sl | 0.943     | 0.946     |
-| CLASSLA.web-hr | 0.888     | 0.892     |
-| CLASSLA.web-mk | 0.932     | 0.932     |
-| CLASSLA.web-sq | 0.865     | 0.863     |
-| MaCoCu-mt | 0.555     | 0.615     |
-
-The top three labels with the lowest F1 score (in each dataset) are marked with bold.
-
-#### CLASSLA.web-sl
-
-Macro f1: 0.943, Micro f1: 0.946, Accuracy: 0.946
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |    1        | 1        |   1        | 10        |
-| **Information/Explanation** |    0.888889 | 1        |   0.941176 |  8        |
-| Instruction             |    1        | 1        |   1        |  9        |
-| Legal                   |    1        | 0.909091 |   0.952381 | 11        |
-| **News**                    |    1        | 0.888889 |   0.941176 |  9        |
-| **Opinion/Argumentation**   |    0.666667 | 1        |   0.8      |  6        |
-| Promotion               |    1        | 1        |   1        |  9        |
-| **Prose/Lyrical**           |    1        | 0.833333 |   0.909091 | 12        |
-
-![](figures/CLASSLA-sl-evaluation.png)
-
-#### Corpus: CLASSLA.web-hr
-
-Macro f1: 0.888, Micro f1: 0.892, Accuracy: 0.892
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |    1        | 0.833333 |   0.909091 | 12        |
-| Information/Explanation |    1        | 0.888889 |   0.941176 |  9        |
-| **Instruction**             |    0.625    | 1        |   0.769231 |  5        |
-| Legal                   |    1        | 1        |   1        |  9        |
-| News                    |    0.9      | 1        |   0.947368 |  9        |
-| **Opinion/Argumentation**   |    0.7      | 0.875    |   0.777778 |  8        |
-| Promotion               |    1        | 0.818182 |   0.9      | 11        |
-| **Prose/Lyrical**           |    0.9      | 0.818182 |   0.857143 | 11        |
-
-![](figures/CLASSLA-hr-evaluation.png)
-
-#### Corpus: CLASSLA.web-mk
-
-Macro f1: 0.932, Micro f1: 0.933, Accuracy: 0.933
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |    1        | 1        |   1        |  9        |
-| **Information/Explanation** |    0.8      | 1        |   0.888889 |  8        |
-| Instruction             |    1        | 1        |   1        |  9        |
-| Legal                   |    0.9      | 1        |   0.947368 |  9        |
-| **News**                    |    1        | 0.818182 |   0.9      | 11        |
-| **Opinion/Argumentation**   |    0.777778 | 0.875    |   0.823529 |  8        |
-| Promotion               |    1        | 0.9      |   0.947368 | 10        |
-| Prose/Lyrical           |    1        | 0.909091 |   0.952381 | 11        |
-
-
-![](figures/CLASSLA-mk-evaluation.png)
-
-#### Corpus: MaCoCu-sq
-
-Macro f1: 0.865, Micro f1: 0.863, Accuracy: 0.863
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| **Forum**                   |    0.857143 | 0.857143 |   0.857143 |  7        |
-| **Information/Explanation** |    1        | 0.615385 |   0.761905 | 13        |
-| Instruction             |    0.9      | 1        |   0.947368 |  9        |
-| Legal                   |    0.9      | 1        |   0.947368 |  9        |
-| News                    |    0.8      | 1        |   0.888889 |  8        |
-| **Opinion/Argumentation**   |    0.7      | 0.777778 |   0.736842 |  9        |
-| Promotion               |    0.888889 | 1        |   0.941176 |  8        |
-| Prose/Lyrical           |    0.888889 | 0.8      |   0.842105 | 10        |
-
-![](figures/MaCoCu-sq-evaluation.png)
-
-
-#### Corpus: MaCoCu-mt
-
-Macro f1: 0.555, Micro f1: 0.615, Accuracy: 0.615
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| **Forum**                   |    0.1      | 1        |   0.181818 |  1        |
-| Information/Explanation |    0.6      | 0.461538 |   0.521739 | 13        |
-| Instruction             |    1        | 0.5      |   0.666667 | 18        |
-| Legal                   |    1        | 1        |   1        | 10        |
-| News                    |    0.9      | 0.6      |   0.72     | 15        |
-| **Opinion/Argumentation**   |    0.3      | 0.375    |   0.333333 |  8        |
-| Promotion               |    0.9      | 0.75     |   0.818182 | 12        |
-| **Prose/Lyrical**           |    0.111111 | 1        |   0.2      |  1        |
-
-![](figures/MaCoCu-mt-evaluation.png)
 
 ### Improved sample evaluation - comparison with the first run
 
