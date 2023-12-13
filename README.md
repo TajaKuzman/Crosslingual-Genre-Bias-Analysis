@@ -6,47 +6,25 @@ For automatic annotation, we only annotate texts that are longer (or the same si
 
 See the [spreadsheet CLASSLA genres](https://docs.google.com/spreadsheets/d/1-jZW_lEAyCdI-tcywjUJUgBgu46jr2el1AgFOGYUxyU/edit?usp=sharing) for all sizes and genre distributions. 
 
-We use the code `1-select_for_xgenre.py` and `2-predict_extended.py` in `/cache/tajak/macocu-mt` (kt-gpu2) (see the README.md file in this directory). The annotated datasets are saved in `/cache/tajak/macocu-mt/datasets/annotated`.
-
-
-## Sample preparation for manual evaluation
-
-- Run: `CUDA_VISIBLE_DEVICES=0 python vert-to-txt-genre-sample.py corpus.vert.gz` - specify the corpus name. This code parses the first 100,000 texts in the corpus and the randomly samples out 10 instances of each of genre classes. Before sampling, we filter out texts, longer than 500 words. It saves the sample as a tab-separated TXT. Then it takes the TXT text, applies google translate over it and saves the text as JSONL, prepared to be imported to the Doccano annotation tool (as a file `datasets/CLASSLA-web.{lang}.1.0.-translated-genre-sample-for-annotation.jsonl`)
-
-- I've also created a function that takes the entire .vert corpus, parses it and saves is as JSONL file: `CUDA_VISIBLE_DEVICES=0 python vert-to-json.py corpus.vert.gz`
-
-
+We use the code `1-select_for_xgenre.py` and `2-predict_extended.py` in `/cache/tajak/macocu-mt` (kt-gpu2) (see the README.md file in this directory). The automatically annotated datasets are saved in `/cache/tajak/macocu-mt/datasets/annotated`.
 
 ## Sample evaluation
 
-The manually annotated samples are *annotations/sample-evaluation-annotation-run1.tsv* and *annotations/manual-genre-evaluation-run2.tsv*.
+The manually annotated samples are:
+- *annotations/sample-evaluation-annotation-run1.tsv* and *annotations/manual-genre-evaluation-run2.tsv* - done on Slovenian, Croatian, Macedonian and Albanian
+- */cache/tajak/macocu-mt/datasets/manually-evaluated/MaCoCu-mt-genre-sample-evaluated.jsonl* - Maltese
 
-For the sample, I randomly sampled 10 instances of each of the genre classes -> 90 instances per corpus. I included "Other" as the label in the sample. However, as this label is mostly used so that the classifier can use it for harder examples, when doing manual annotation, I tried to identify the actual label of these texts, so most of texts, labelled Other, were manually annotated as something else.
+Code for evaluation pf results: `evaluation-of-annotation.ipynb`
+
+### First batch of languages: Slovenian, Croatian, Macedonian and Albanian
+
+For the sample, I randomly sampled 10 instances of each of the genre classes from the first 100.000 texts in the corpora -> 90 instances per corpus. I included "Other" as the label in the sample. However, as this label is mostly used so that the classifier can use it for harder examples, when doing manual annotation, I tried to identify the actual label of these texts, so most of texts, labelled Other, were manually annotated as something else.
 
 I evaluated three corpora: CLASSLA-web.sl, CLASSLA-web.hr and CLASSLA-web.mk. After the two rounds of evaluation of these three corpora, I also evaluated the Albanian corpus: MaCoCu-sq.
 
-Code for evaluation: `evaluation-of-annotation.ipynb`
+### Second batch: extended evaluation to all other MaCoCu corpora
 
-The following results (label distributions and comparisons with y_pred) are based on the second, improved annotation run.
-
-### Improved sample evaluation - comparison with the first run
-
-I re-did the evaluation on the same dataset, but after some improvements: the text was clearly separated into paragraphs -> texts are much more comprehensible and easier to understand; I used the doccano annotation platform -> easier and (slightly) faster annotation.
-
-When I compared my annotations from the two runs, there were disagreements between the labels in 40 instances - 15% of instances.
-
-The reasons for the differences:
-
-| reason | frequency (# instances) |
-|---|---|
-| improved second run (text annotated with a label, instead of "problematic") | 8 |
-| detected "multiple texts" that I didn't in the first run | 9 |
-| inter-annotator disagreement | 23 |
-
-So we can see that the improved methodology (better shown texts, using doccano and paragraph structure) improved annotation of 17 cases - 6% of all texts (either we were able to annotate texts that were previously incomprehensible, or we detected problematic texts that we previously didn't due to the lacking text structure).
-
-In 23 instances (9%), there was inter-annotator disagreement, which shows the level of difficulty of this task. However, 8 of these cases appeared when annotating texts that were predicted as "Other", which we decided that we won't include in the annotation campaign anyway. If we disregard these cases, disagreement happened in 15 instances - 6% of texts.
-
+The sample was prepared in the same way, except for the fact that we randomly sampled the texts from the entire corpus (not from the first 100.000 as in the first batch). Second difference is that we did not include the "Other" label in the sample, because this is used as a "throw-away" category to be used when the classifier doesn't recognize the text to be of any other, more concrete genres.
 
 ### Label distribution (y_true)
 
@@ -112,16 +90,28 @@ Corpus: sq
 | Multiple texts  (3%)        |       3 |
 | Incomprehensible (2%)       |       2 |
 
+Corpus: mt
 
-7-8% of texts were annotated to be problematic ("multiple texts") - mostly, they were not a coherent text (just a list of summaries, multiple texts concatenated). In Albanian, the situation is a bit different: there were less problematic ("multiple texts") texts - only 3%. However, in Albanian sample, there were also some incomprehensible texts - probably due to bad machine translation - 2% of texts.
+| y_true                  |   count |
+|:------------------------|--------:|
+| Instruction             |      18 |
+| News                    |      15 |
+| Information/Explanation |      13 |
+| Promotion               |      12 |
+| Legal                   |      10 |
+| Opinion/Argumentation   |       8 |
+| Multiple texts  (0.025%)        |       2 |
+| Forum                   |       1 |
+| Prose/Lyrical           |       1 |
 
-Secondly, in most cases, I manually annotated the category Other as some other, more concrete label.
+Number of texts, annotated as problematic ("multiple texts") - mostly, they were not a coherent text (just a list of summaries, multiple texts concatenated):
+- Slovenian, Croatian, Macedonian: 7-8%
+- Albanian, Maltese: 3% - there were less problematic texts. However, in Albanian sample, there were also some incomprehensible texts - probably due to bad machine translation - 2% of texts.
 
-For calculating the metrics of classifier's performance, I will thus remove "Other" texts and "Multiple texts" (also "Incomprehensible" in case of Albanian) texts from the sample.
 
 ### Comparing y_true and y_pred with F1 scores
 
-In the evaluation, we compare only the predictions of 8 labels - not including "Other". In addition, I had to remove texts that I could not manually annotate (they were not coherent texts). Final evaluated sample consists of 223 instances (hr, sl and mk).
+For calculating the metrics of classifier's performance, I remove "Other" texts and "Multiple texts" (also "Incomprehensible" in case of Albanian) texts from the sample. Thus, we compare only the predictions of 8 labels.
 
 Frequency of predicted labels after removal of "Other" and "Problematic" texts:
 
@@ -177,75 +167,132 @@ Corpus: sq
 | Information/Explanation |       8 |
 | Forum                   |       7 |
 
-**Results**
+Corpus: mt
+
+| y_pred                  |   count |
+|:------------------------|--------:|
+| News                    |      10 |
+| Forum                   |      10 |
+| Information/Explanation |      10 |
+| Opinion/Argumentation   |      10 |
+| Legal                   |      10 |
+| Promotion               |      10 |
+| Prose/Lyrical           |       9 |
+| Instruction             |       9 |
+
+#### Results
 
 | Dataset        | Macro F1 | Micro F1 |
 |----------------|----------|----------|
-| CLASSLA.web-sl | 0.94     | 0.95     |
-| CLASSLA.web-hr | 0.89     | 0.89     |
-| CLASSLA.web-mk | 0.93     | 0.93     |
-| CLASSLA.web-sq | 0.87     | 0.86     |
+| CLASSLA.web-sl | 0.943     | 0.946     |
+| CLASSLA.web-hr | 0.888     | 0.892     |
+| CLASSLA.web-mk | 0.932     | 0.932     |
+| CLASSLA.web-sq | 0.865     | 0.863     |
+| MaCoCu-mt | 0.555     | 0.615     |
 
 The top three labels with the lowest F1 score (in each dataset) are marked with bold.
 
-**Corpus: CLASSLA.web-sl**
+#### CLASSLA.web-sl
 
 Macro f1: 0.943, Micro f1: 0.946, Accuracy: 0.946
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| News                    |    1        | 1        |   1        | 10        |
-| **Instruction**             |    0.888889 | 1        |   0.941176 |  8        |
-| Opinion/Argumentation   |    1        | 1        |   1        |  9        |
-| Promotion               |    1        | 0.909091 |   0.952381 | 11        |
-| **Legal**                   |    1        | 0.888889 |   0.941176 |  9        |
-| **Information/Explanation** |    0.666667 | 1        |   0.8      |  6        |
-| Prose/Lyrical           |    1        | 1        |   1        |  9        |
-| **Forum**                   |    1        | 0.833333 |   0.909091 | 12        |
+| Forum                   |    1        | 1        |   1        | 10        |
+| **Information/Explanation** |    0.888889 | 1        |   0.941176 |  8        |
+| Instruction             |    1        | 1        |   1        |  9        |
+| Legal                   |    1        | 0.909091 |   0.952381 | 11        |
+| **News**                    |    1        | 0.888889 |   0.941176 |  9        |
+| **Opinion/Argumentation**   |    0.666667 | 1        |   0.8      |  6        |
+| Promotion               |    1        | 1        |   1        |  9        |
+| **Prose/Lyrical**           |    1        | 0.833333 |   0.909091 | 12        |
 
+![](figures/CLASSLA-sl-evaluation.png)
 
-**Corpus: CLASSLA.web-hr**
+#### Corpus: CLASSLA.web-hr
 
 Macro f1: 0.888, Micro f1: 0.892, Accuracy: 0.892
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| Promotion               |    1        | 0.833333 |   0.909091 | 12        |
+| Forum                   |    1        | 0.833333 |   0.909091 | 12        |
 | Information/Explanation |    1        | 0.888889 |   0.941176 |  9        |
-| **Prose/Lyrical**           |    0.625    | 1        |   0.769231 |  5        |
-| Forum                   |    1        | 1        |   1        |  9        |
-| Opinion/Argumentation   |    0.9      | 1        |   0.947368 |  9        |
-| **Legal**                   |    0.7      | 0.875    |   0.777778 |  8        |
-| News                    |    1        | 0.818182 |   0.9      | 11        |
-| **Instruction**             |    0.9      | 0.818182 |   0.857143 | 11        |
+| **Instruction**             |    0.625    | 1        |   0.769231 |  5        |
+| Legal                   |    1        | 1        |   1        |  9        |
+| News                    |    0.9      | 1        |   0.947368 |  9        |
+| **Opinion/Argumentation**   |    0.7      | 0.875    |   0.777778 |  8        |
+| Promotion               |    1        | 0.818182 |   0.9      | 11        |
+| **Prose/Lyrical**           |    0.9      | 0.818182 |   0.857143 | 11        |
 
+![](figures/CLASSLA-hr-evaluation.png)
 
-**Corpus: CLASSLA.web-mk**
+#### Corpus: CLASSLA.web-mk
 
 Macro f1: 0.932, Micro f1: 0.933, Accuracy: 0.933
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
 | Forum                   |    1        | 1        |   1        |  9        |
-| **News**                    |    0.8      | 1        |   0.888889 |  8        |
+| **Information/Explanation** |    0.8      | 1        |   0.888889 |  8        |
 | Instruction             |    1        | 1        |   1        |  9        |
-| Promotion               |    0.9      | 1        |   0.947368 |  9        |
-| **Prose/Lyrical**           |    1        | 0.818182 |   0.9      | 11        |
+| Legal                   |    0.9      | 1        |   0.947368 |  9        |
+| **News**                    |    1        | 0.818182 |   0.9      | 11        |
 | **Opinion/Argumentation**   |    0.777778 | 0.875    |   0.823529 |  8        |
-| Legal                   |    1        | 0.9      |   0.947368 | 10        |
-| Information/Explanation |    1        | 0.909091 |   0.952381 | 11        |
+| Promotion               |    1        | 0.9      |   0.947368 | 10        |
+| Prose/Lyrical           |    1        | 0.909091 |   0.952381 | 11        |
 
-**Corpus: CLASSLA.web-sq**
+
+![](figures/CLASSLA-mk-evaluation.png)
+
+#### Corpus: MaCoCu-sq
 
 Macro f1: 0.865, Micro f1: 0.863, Accuracy: 0.863
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| Opinion/Argumentation   |    0.857143 | 0.857143 |   0.857143 |  7        |
-| **Legal**                   |    1        | 0.615385 |   0.761905 | 13        |
-| News                    |    0.9      | 1        |   0.947368 |  9        |
-| Prose/Lyrical           |    0.9      | 1        |   0.947368 |  9        |
-| Forum                   |    0.8      | 1        |   0.888889 |  8        |
-| **Information/Explanation** |    0.7      | 0.777778 |   0.736842 |  9        |
+| **Forum**                   |    0.857143 | 0.857143 |   0.857143 |  7        |
+| **Information/Explanation** |    1        | 0.615385 |   0.761905 | 13        |
+| Instruction             |    0.9      | 1        |   0.947368 |  9        |
+| Legal                   |    0.9      | 1        |   0.947368 |  9        |
+| News                    |    0.8      | 1        |   0.888889 |  8        |
+| **Opinion/Argumentation**   |    0.7      | 0.777778 |   0.736842 |  9        |
 | Promotion               |    0.888889 | 1        |   0.941176 |  8        |
-| **Instruction**             |    0.888889 | 0.8      |   0.842105 | 10        |
+| Prose/Lyrical           |    0.888889 | 0.8      |   0.842105 | 10        |
+
+![](figures/MaCoCu-sq-evaluation.png)
+
+
+#### Corpus: MaCoCu-mt
+
+Macro f1: 0.555, Micro f1: 0.615, Accuracy: 0.615
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| **Forum**                   |    0.1      | 1        |   0.181818 |  1        |
+| Information/Explanation |    0.6      | 0.461538 |   0.521739 | 13        |
+| Instruction             |    1        | 0.5      |   0.666667 | 18        |
+| Legal                   |    1        | 1        |   1        | 10        |
+| News                    |    0.9      | 0.6      |   0.72     | 15        |
+| **Opinion/Argumentation**   |    0.3      | 0.375    |   0.333333 |  8        |
+| Promotion               |    0.9      | 0.75     |   0.818182 | 12        |
+| **Prose/Lyrical**           |    0.111111 | 1        |   0.2      |  1        |
+
+![](figures/MaCoCu-mt-evaluation.png)
+
+### Improved sample evaluation - comparison with the first run
+
+I re-did the evaluation on the same dataset, but after some improvements: the text was clearly separated into paragraphs -> texts are much more comprehensible and easier to understand; I used the doccano annotation platform -> easier and (slightly) faster annotation.
+
+When I compared my annotations from the two runs, there were disagreements between the labels in 40 instances - 15% of instances.
+
+The reasons for the differences:
+
+| reason | frequency (# instances) |
+|---|---|
+| improved second run (text annotated with a label, instead of "problematic") | 8 |
+| detected "multiple texts" that I didn't in the first run | 9 |
+| inter-annotator disagreement | 23 |
+
+So we can see that the improved methodology (better shown texts, using doccano and paragraph structure) improved annotation of 17 cases - 6% of all texts (either we were able to annotate texts that were previously incomprehensible, or we detected problematic texts that we previously didn't due to the lacking text structure).
+
+In 23 instances (9%), there was inter-annotator disagreement, which shows the level of difficulty of this task. However, 8 of these cases appeared when annotating texts that were predicted as "Other", which we decided that we won't include in the annotation campaign anyway. If we disregard these cases, disagreement happened in 15 instances - 6% of texts.
