@@ -23,8 +23,10 @@ Code for evaluation of results: `evaluation-of-annotation.ipynb`
 | CLASSLA.web-sl | 0.943     | 0.946     |
 | CLASSLA.web-hr | 0.888     | 0.892     |
 | CLASSLA.web-mk | 0.932     | 0.932     |
-| CLASSLA.web-sq | 0.865     | 0.863     |
+| MaCoCu-sq | 0.865     | 0.863     |
 | MaCoCu-mt | 0.555     | 0.615     |
+| MaCoCu-mt (dummy: most-frequent) | 0.040     | 0.192     |
+| MaCoCu-mt (dummy: stratified) | 0.105     | 0.131     |
 
 The top three labels with the lowest F1 score (in each dataset) are marked with bold.
 
