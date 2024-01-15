@@ -30,7 +30,7 @@ Run the following:
 8. If needed, annotate additional instances: see section `Add additional instances to the sample to achieve 10 instances per label` in `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` to prepare additional instances; and section `Add additionally annotated instances` in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to merge them with initial sample and get final evaluations.
 
 Final outputs are:
-- `manual-annotations/MaCoCu-{lang}-genre-sample-evaluated-complete-sample.jsonl` - manually evaluated samples - initial samples + additional instances (so that each label was evaluated on 10 instances); Multiple texts and Other texts are marked, but included in the sample - use the code in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to discard them and evaluate them.
+- `manual-annotations/MaCoCu-{lang}-genre-sample-evaluated-complete-sample.jsonl` - manually evaluated samples (or `MaCoCu-{lang}-genre-sample-evaluated-complete-sample-run2.jsonl` in case there were two rounds of adding additional instances)- initial samples + additional instances (so that each label was evaluated on 10 instances); Multiple texts and Other texts are marked, but included in the sample - use the code in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to discard them and evaluate them.
 
 
 Here are the paths to the files:
@@ -69,7 +69,13 @@ Then we translate the source text in the sample to English using Google Translat
 
 | Dataset        | Macro F1 | Micro F1 |
 |----------------|----------|----------|
+| MaCoCu-uk | 0.948     | 0.950     |
+| CLASSLA.web-mk | 0.932     | 0.925     |
+| MaCoCu-tr | 0.899     | 0.9     |
+| MaCoCu-sq | 0.866    | 0.863     |
 | MaCoCu-el | 0.844     | 0.850     |
+| MaCoCu-ca | 0.827     | 0.825     |
+| MaCoCu-is | 0.810     | 0.812     |
 | MaCoCu-mt | 0.552     | 0.613     |
 
 
@@ -126,36 +132,39 @@ Macro f1: 0.888, Micro f1: 0.892, Accuracy: 0.892
 
 ### Corpus: CLASSLA.web-mk
 
-Macro f1: 0.932, Micro f1: 0.933, Accuracy: 0.933
+Macro f1: 0.923, Micro f1: 0.925, Accuracy: 0.925
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |    1        | 1        |   1        |  9        |
-| **Information/Explanation** |    0.8      | 1        |   0.888889 |  8        |
-| Instruction             |    1        | 1        |   1        |  9        |
-| Legal                   |    0.9      | 1        |   0.947368 |  9        |
-| **News**                    |    1        | 0.818182 |   0.9      | 11        |
-| **Opinion/Argumentation**   |    0.777778 | 0.875    |   0.823529 |  8        |
-| Promotion               |    1        | 0.9      |   0.947368 | 10        |
-| Prose/Lyrical           |    1        | 0.909091 |   0.952381 | 11        |
-
-
-![](figures/CLASSLA-mk-evaluation.png)
+| Forum                   |     1       | 1        |   1        |    10     |
+| Information/Explanation |     0.8     | 0.888889 |   0.842105 |     9     |
+| Instruction             |     1       | 1        |   1        |    10     |
+| Legal                   |     0.9     | 1        |   0.947368 |     9     |
+| News                    |     1       | 0.833333 |   0.909091 |    12     |
+| Opinion/Argumentation   |     0.7     | 0.875    |   0.777778 |     8     |
+| Promotion               |     1       | 0.909091 |   0.952381 |    11     |
+| Prose/Lyrical           |     1       | 0.909091 |   0.952381 |    11     |
+| accuracy                |     0.925   | 0.925    |   0.925    |     0.925 |
+| macro avg               |     0.925   | 0.926926 |   0.922638 |    80     |
+| weighted avg            |     0.93625 | 0.925    |   0.927362 |    80     |
 
 ### Corpus: MaCoCu-sq
 
-Macro f1: 0.865, Micro f1: 0.863, Accuracy: 0.863
+Macro f1: 0.866, Micro f1: 0.863, Accuracy: 0.863
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| **Forum**                   |    0.857143 | 0.857143 |   0.857143 |  7        |
-| **Information/Explanation** |    1        | 0.615385 |   0.761905 | 13        |
-| Instruction             |    0.9      | 1        |   0.947368 |  9        |
-| Legal                   |    0.9      | 1        |   0.947368 |  9        |
-| News                    |    0.8      | 1        |   0.888889 |  8        |
-| **Opinion/Argumentation**   |    0.7      | 0.777778 |   0.736842 |  9        |
-| Promotion               |    0.888889 | 1        |   0.941176 |  8        |
-| Prose/Lyrical           |    0.888889 | 0.8      |   0.842105 | 10        |
+| Forum                   |      0.8    | 0.888889 |   0.842105 |    9      |
+| Information/Explanation |      1      | 0.666667 |   0.8      |   15      |
+| Instruction             |      0.9    | 1        |   0.947368 |    9      |
+| Legal                   |      0.9    | 1        |   0.947368 |    9      |
+| News                    |      0.8    | 1        |   0.888889 |    8      |
+| Opinion/Argumentation   |      0.7    | 0.7      |   0.7      |   10      |
+| Promotion               |      0.9    | 1        |   0.947368 |    9      |
+| Prose/Lyrical           |      0.9    | 0.818182 |   0.857143 |   11      |
+| accuracy                |      0.8625 | 0.8625   |   0.8625   |    0.8625 |
+| macro avg               |      0.8625 | 0.884217 |   0.86628  |   80      |
+| weighted avg            |      0.8725 | 0.8625   |   0.85872  |   80      |
 
 ![](figures/MaCoCu-sq-evaluation.png)
 
@@ -183,21 +192,21 @@ Macro f1: 0.552, Micro f1: 0.613, Accuracy: 0.613
 
 ### Corpus: MaCoCu-tr
 
-Macro f1: 0.905, Micro f1: 0.907, Accuracy: 0.907
+Macro f1: 0.899, Micro f1: 0.9, Accuracy: 0.9
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |    0.888889 | 1        |   0.941176 |  8        |
-| **Information/Explanation** |    0.666667 | 1        |   0.8      |  6        |
-| Instruction             |    0.9      | 0.9      |   0.9      | 10        |
-| Legal                   |    1        | 1        |   1        | 10        |
-| News                    |    1        | 0.9      |   0.947368 | 10        |
-| **Opinion/Argumentation**   |    0.9      | 0.75     |   0.818182 | 12        |
-| **Promotion**               |    0.888889 | 0.888889 |   0.888889 |  9        |
-| Prose/Lyrical           |    1        | 0.9      |   0.947368 | 10        |
-| accuracy                |    0.906667 | 0.906667 |   0.906667 |  0.906667 |
-| macro avg               |    0.905556 | 0.917361 |   0.905373 | 75        |
-| weighted avg            |    0.918815 | 0.906667 |   0.907933 | 75        |
+| Forum                   |      0.8    | 1        |   0.888889 |       8   |
+| Information/Explanation |      0.7    | 1        |   0.823529 |       7   |
+| Instruction             |      0.9    | 0.9      |   0.9      |      10   |
+| Legal                   |      1      | 1        |   1        |      10   |
+| News                    |      1      | 0.909091 |   0.952381 |      11   |
+| Opinion/Argumentation   |      0.9    | 0.75     |   0.818182 |      12   |
+| Promotion               |      0.9    | 0.818182 |   0.857143 |      11   |
+| Prose/Lyrical           |      1      | 0.909091 |   0.952381 |      11   |
+| accuracy                |      0.9    | 0.9      |   0.9      |       0.9 |
+| macro avg               |      0.9    | 0.910795 |   0.899063 |      80   |
+| weighted avg            |      0.9125 | 0.9      |   0.900937 |      80   |
 
 ### MaCoCu-el
 
@@ -216,6 +225,61 @@ Macro f1: 0.844, Micro f1: 0.85, Accuracy: 0.85
 | accuracy                |      0.85   | 0.85     |   0.85     |      0.85 |
 | macro avg               |      0.85   | 0.860523 |   0.84356  |     80    |
 | weighted avg            |      0.8825 | 0.85     |   0.85644  |     80    |
+
+### MaCoCu-is
+
+Macro f1: 0.81, Micro f1: 0.812, Accuracy: 0.812
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |     0.9     | 1        |   0.947368 |    9      |
+| Information/Explanation |     0.5     | 0.714286 |   0.588235 |    7      |
+| Instruction             |     0.7     | 0.875    |   0.777778 |    8      |
+| Legal                   |     0.8     | 0.888889 |   0.842105 |    9      |
+| News                    |     0.8     | 0.666667 |   0.727273 |   12      |
+| Opinion/Argumentation   |     0.9     | 0.75     |   0.818182 |   12      |
+| Promotion               |     0.9     | 0.692308 |   0.782609 |   13      |
+| Prose/Lyrical           |     1       | 1        |   1        |   10      |
+| accuracy                |     0.8125  | 0.8125   |   0.8125   |    0.8125 |
+| macro avg               |     0.8125  | 0.823394 |   0.810444 |   80      |
+| weighted avg            |     0.83125 | 0.8125   |   0.814556 |   80      |
+
+### MaCoCu-ca
+
+Macro f1: 0.827, Micro f1: 0.825, Accuracy: 0.825
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |      0.8    | 0.888889 |   0.842105 |     9     |
+| Information/Explanation |      0.9    | 0.6      |   0.72     |    15     |
+| Instruction             |      0.6    | 1        |   0.75     |     6     |
+| Legal                   |      0.9    | 1        |   0.947368 |     9     |
+| News                    |      0.7    | 1        |   0.823529 |     7     |
+| Opinion/Argumentation   |      0.8    | 0.888889 |   0.842105 |     9     |
+| Promotion               |      0.9    | 0.692308 |   0.782609 |    13     |
+| Prose/Lyrical           |      1      | 0.833333 |   0.909091 |    12     |
+| accuracy                |      0.825  | 0.825    |   0.825    |     0.825 |
+| macro avg               |      0.825  | 0.862927 |   0.827101 |    80     |
+| weighted avg            |      0.8525 | 0.825    |   0.822899 |    80     |
+
+### MaCoCu-uk
+
+Macro f1: 0.948, Micro f1: 0.95, Accuracy: 0.95
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |     0.9     | 1        |   0.947368 |      9    |
+| Information/Explanation |     1       | 1        |   1        |     10    |
+| Instruction             |     1       | 0.909091 |   0.952381 |     11    |
+| Legal                   |     1       | 1        |   1        |     10    |
+| News                    |     1       | 1        |   1        |     10    |
+| Opinion/Argumentation   |     1       | 0.833333 |   0.909091 |     12    |
+| Promotion               |     0.7     | 0.875    |   0.777778 |      8    |
+| Prose/Lyrical           |     1       | 1        |   1        |     10    |
+| accuracy                |     0.95    | 0.95     |   0.95     |      0.95 |
+| macro avg               |     0.95    | 0.952178 |   0.948327 |     80    |
+| weighted avg            |     0.95875 | 0.95     |   0.951673 |     80    |
+
 
 ## More information on sample evaluation
 
@@ -265,8 +329,98 @@ MaCoCu-el:
 | Promotion               |       6 |
 | Multiple texts (7%)         |       6 |
 
+MaCoCu-tr:
+
+| y_true                  |   count |
+|:------------------------|--------:|
+| Opinion/Argumentation   |      12 |
+| News                    |      11 |
+| Prose/Lyrical           |      11 |
+| Promotion               |      11 |
+| Instruction             |      10 |
+| Legal                   |      10 |
+| Forum                   |       8 |
+| Information/Explanation |       7 |
+| Multiple texts (4.7%)         |       4 |
+| Other  (1.17%)                 |       1 |
+
+MaCoCu-sq:
+
+| y_true                  |   count |
+|:------------------------|--------:|
+| Information/Explanation |      17 |
+| Opinion/Argumentation   |      12 |
+| Forum                   |      12 |
+| Prose/Lyrical           |      12 |
+| Legal                   |       9 |
+| Promotion               |       9 |
+| Instruction             |       9 |
+| News                    |       8 |
+| Other (4.12%)                  |       4 |
+| Multiple texts (3.1%)         |       3 |
+| Incomprehensible (2.1%)       |       2 |
+
+MaCoCu-is:
+
+| y_true                  |   count |
+|:------------------------|--------:|
+| Promotion               |      13 |
+| Opinion/Argumentation   |      12 |
+| News                    |      12 |
+| Prose/Lyrical           |      10 |
+| Legal                   |       9 |
+| Forum                   |       9 |
+| Instruction             |       8 |
+| Information/Explanation |       7 |
+| Multiple texts (7.95%)         |       7 |
+| Incomprehensible (1.14%)       |       1 |
+
+MaCoCu-ca:
+
+| y_true                  |   count |
+|:------------------------|--------:|
+| Information/Explanation |      15 |
+| Promotion               |      13 |
+| Prose/Lyrical           |      12 |
+| Forum                   |       9 |
+| Legal                   |       9 |
+| Opinion/Argumentation   |       9 |
+| News                    |       7 |
+| Instruction             |       6 |
+| Multiple texts (3.5%)         |       3 |
+| Incomprehensible (2.35%)       |       2 |
+
+MaCoCu-uk:
+
+| y_true                  |   count |
+|:------------------------|--------:|
+| Opinion/Argumentation   |      12 |
+| Instruction             |      11 |
+| Prose/Lyrical           |      10 |
+| Legal                   |      10 |
+| News                    |      10 |
+| Information/Explanation |      10 |
+| Forum                   |       9 |
+| Promotion               |       8 |
+| Multiple texts  (9%)        |       8 |
+
+CLASSLA-mk:
+
+| y_true                  |   count |
+|:------------------------|--------:|
+| Promotion               |      13 |
+| News                    |      12 |
+| Prose/Lyrical           |      11 |
+| Opinion/Argumentation   |      11 |
+| Information/Explanation |      11 |
+| Forum                   |      10 |
+| Instruction             |      10 |
+| Legal                   |       9 |
+| Multiple texts  (8.3%)        |       8 |
+| Other   (1%)                |       1 |
+
 Number of texts, annotated as problematic ("multiple texts") - mostly, they were not a coherent text (just a list of summaries, multiple texts concatenated):
-- Slovenian, Croatian, Macedonian, Icelandic, Greek, Ukrainian: 6-8%
+- Slovenian, Croatian, Macedonian, Icelandic, Greek, Ukrainian: 6-9%
 - Albanian, Maltese, Turkish, Catalan: 3-5% - there were less problematic texts. However, in Albanian sample, there were also some incomprehensible texts - probably due to bad machine translation - 2% of texts.
 
 
