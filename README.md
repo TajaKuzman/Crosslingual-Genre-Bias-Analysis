@@ -8,6 +8,13 @@ See the [spreadsheet CLASSLA genres](https://docs.google.com/spreadsheets/d/1-jZ
 
 We use the code `1-select_for_xgenre.py` and `2-predict_extended.py` in `/cache/tajak/macocu-mt/`. The automatically annotated datasets are saved in `/cache/tajak/macocu-mt/datasets/annotated`.
 
+Final test corpus which consists of all manually evaluated corpora is: `/home/tajak/Crosslingual-Genre-Bias-Analysis/manual-annotations/multilingual-genre-annotated-test-set.json`
+
+It is a JSON file with the following values:
+- language: language of the test set. Each language suffix then consists of the following values:
+    - accuracy, micro_f1, macro_f1: the evaluation results in accuracy, micro F1 and macro F1 metric
+    - dataset: the test dataset, which includes the automatically predicted labels (y_pred), the manually-evaluated labels (y_true), text, translation (the translation to English which was used for manual evaluation), text_id (the same as in the original MaCoCu or CLASSLA-web corpora) and metadata. The dataset can be opened as a pandas dataframe: `pd.DataFrame(json_dict["lang"]["dataset"])`
+
 ### Download and unzip the relevant corpora
 
 Run the following:
@@ -19,6 +26,11 @@ Run the following:
 6. Extract a genre sample that will be used for manual evaluation: use the script `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` There are two outputs:
     - `/datasets/annotated/MaCoCu-{suffix}-genre-sample.jsonl` - the genre sample with all information
     - `/datasets/annotated/MaCoCu-{}-genre-sample-for-annotation-tool.jsonl` - the genre sample, prepared to be imported to the Dockanno annotation tool (without source text and with less information)
+7. Evaluate the sample after annotation: `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb`
+8. If needed, annotate additional instances: see section `Add additional instances to the sample to achieve 10 instances per label` in `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` to prepare additional instances; and section `Add additionally annotated instances` in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to merge them with initial sample and get final evaluations.
+
+Final outputs are:
+- `manual-annotations/MaCoCu-{lang}-genre-sample-evaluated-complete-sample.jsonl` - manually evaluated samples - initial samples + additional instances (so that each label was evaluated on 10 instances); Multiple texts and Other texts are marked, but included in the sample - use the code in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to discard them and evaluate them.
 
 
 Here are the paths to the files:
@@ -47,33 +59,36 @@ corpora_location='{
 
 ### Genre sample preparation
 
-The genre samples are prepared in such way that we take 10 random instances of each genre from the entire corpus. We do not include the genres "Other" and "Mix", as they are not informative - the final sample size is 80 instances.
+The genre samples are prepared in such way that we take 10 random instances of each genre from the entire corpus. We do not include the genres "Other" and "Mix", as they are not informative - the final sample size is 80 instances. If the manual evalutation shows that some instances had to be discarded, because they were "Multiple texts", "Incomprehensible" or would belong to the category "Other", we annotated additional instances so that each label was annotated on 10 instances.
 
 Then we translate the source text in the sample to English using Google Translate. Google Translate provides models for all of our languages, except for Montenegrin, for which we used the Serbian MT model.
 
-
-## Sample evaluation
-
-The manually annotated samples are:
-- *annotations/sample-evaluation-annotation-run1.tsv* and *annotations/manual-genre-evaluation-run2.tsv* - done on Slovenian, Croatian, Macedonian and Albanian
-- */cache/tajak/macocu-mt/datasets/manually-evaluated/MaCoCu-mt-genre-sample-evaluated.jsonl* - Maltese
-
-Code for evaluation of results: `evaluation-of-annotation.ipynb`
+## Analyze the results
 
 ### Results
 
 | Dataset        | Macro F1 | Micro F1 |
 |----------------|----------|----------|
+| MaCoCu-el | 0.844     | 0.850     |
+| MaCoCu-mt | 0.552     | 0.613     |
+
+
+Old results (not 10 instances per label):
+
+| Dataset        | Macro F1 | Micro F1 |
+|----------------|----------|----------|
+| MaCoCu-uk | 0.948     | 0.945     |
 | CLASSLA.web-sl | 0.943     | 0.946     |
-| CLASSLA.web-mk | 0.932     | 0.932     |
+| CLASSLA.web-mk | 0.932     | 0.933     |
 | MaCoCu-tr | 0.905     | 0.907     |
 | CLASSLA.web-hr | 0.888     | 0.892     |
 | MaCoCu-sq | 0.865     | 0.863     |
+| MaCoCu-el | 0.843     | 0.851     |
+| MaCoCu-ca | 0.831     | 0.829     |
+| MaCoCu-is | 0.807     | 0.808     |
 | MaCoCu-mt | 0.555     | 0.615     |
 | MaCoCu-mt (dummy: most-frequent) | 0.040     | 0.192     |
 | MaCoCu-mt (dummy: stratified) | 0.105     | 0.131     |
-
-The top three labels with the lowest F1 score (in each dataset) are marked with bold.
 
 ### CLASSLA.web-sl
 
@@ -147,18 +162,21 @@ Macro f1: 0.865, Micro f1: 0.863, Accuracy: 0.863
 
 ### Corpus: MaCoCu-mt
 
-Macro f1: 0.555, Micro f1: 0.615, Accuracy: 0.615
+Macro f1: 0.552, Micro f1: 0.613, Accuracy: 0.613
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| **Forum**                   |    0.1      | 1        |   0.181818 |  1        |
-| Information/Explanation |    0.6      | 0.461538 |   0.521739 | 13        |
-| Instruction             |    1        | 0.5      |   0.666667 | 18        |
-| Legal                   |    1        | 1        |   1        | 10        |
-| News                    |    0.9      | 0.6      |   0.72     | 15        |
-| **Opinion/Argumentation**   |    0.3      | 0.375    |   0.333333 |  8        |
-| Promotion               |    0.9      | 0.75     |   0.818182 | 12        |
-| **Prose/Lyrical**           |    0.111111 | 1        |   0.2      |  1        |
+| Forum                   |      0.1    | 1        |   0.181818 |    1      |
+| Information/Explanation |      0.6    | 0.461538 |   0.521739 |   13      |
+| Instruction             |      1      | 0.526316 |   0.689655 |   19      |
+| Legal                   |      1      | 1        |   1        |   10      |
+| News                    |      0.9    | 0.5625   |   0.692308 |   16      |
+| Opinion/Argumentation   |      0.3    | 0.375    |   0.333333 |    8      |
+| Promotion               |      0.9    | 0.75     |   0.818182 |   12      |
+| Prose/Lyrical           |      0.1    | 1        |   0.181818 |    1      |
+| accuracy                |      0.6125 | 0.6125   |   0.6125   |    0.6125 |
+| macro avg               |      0.6125 | 0.709419 |   0.552357 |   80      |
+| weighted avg            |      0.8075 | 0.6125   |   0.672643 |   80      |
 
 ![](figures/MaCoCu-mt-evaluation.png)
 
@@ -181,6 +199,23 @@ Macro f1: 0.905, Micro f1: 0.907, Accuracy: 0.907
 | macro avg               |    0.905556 | 0.917361 |   0.905373 | 75        |
 | weighted avg            |    0.918815 | 0.906667 |   0.907933 | 75        |
 
+### MaCoCu-el
+
+Macro f1: 0.844, Micro f1: 0.85, Accuracy: 0.85
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |      1      | 0.909091 |   0.952381 |     11    |
+| Information/Explanation |      0.8    | 0.615385 |   0.695652 |     13    |
+| Instruction             |      0.6    | 0.857143 |   0.705882 |      7    |
+| Legal                   |      1      | 1        |   1        |     10    |
+| News                    |      0.9    | 0.9      |   0.9      |     10    |
+| Opinion/Argumentation   |      1      | 0.769231 |   0.869565 |     13    |
+| Promotion               |      0.5    | 0.833333 |   0.625    |      6    |
+| Prose/Lyrical           |      1      | 1        |   1        |     10    |
+| accuracy                |      0.85   | 0.85     |   0.85     |      0.85 |
+| macro avg               |      0.85   | 0.860523 |   0.84356  |     80    |
+| weighted avg            |      0.8825 | 0.85     |   0.85644  |     80    |
 
 ## More information on sample evaluation
 
@@ -196,185 +231,43 @@ The sample was prepared in the same way, except for the fact that we randomly sa
 
 ### Label distribution (y_true)
 
-Corpus: mk
+This is the distribution after the additionally evaluated instances were added.
 
-| y_true_run2             |   count |
-|:------------------------|--------:|
-| Promotion               |      12 |
-| News                    |      11 |
-| Prose/Lyrical           |      11 |
-| Opinion/Argumentation   |      11 |
-| Information/Explanation |      10 |
-| Forum                   |       9 |
-| Instruction             |       9 |
-| Legal                   |       9 |
-| Multiple texts  (8%)        |       7 |
-| Other                   |       1 |
+For calculating the metrics of classifier's performance, I remove "Other" texts and "Multiple texts" (also "Incomprehensible" in case of Albanian) texts from the sample. Thus, we compare only the predictions of 8 labels, each having 10 instances.
 
-Corpus: hr
+Initial distribution (before post-processing):
 
-| y_true_run2             |   count |
-|:------------------------|--------:|
-| Promotion               |      14 |
-| Prose/Lyrical           |      12 |
-| Forum                   |      12 |
-| Information/Explanation |       9 |
-| Legal                   |       9 |
-| News                    |       9 |
-| Opinion/Argumentation   |       8 |
-| Multiple texts (7%)         |       6 |
-| Other                   |       6 |
-| Instruction             |       5 |
-
-
-Corpus: sl
-
-| y_true_run2             |   count |
-|:------------------------|--------:|
-| Prose/Lyrical           |      13 |
-| Promotion               |      12 |
-| Legal                   |      11 |
-| Forum                   |      10 |
-| News                    |       9 |
-| Instruction             |       9 |
-| Information/Explanation |       9 |
-| Multiple texts (8%)         |       7 |
-| Opinion/Argumentation   |       7 |
-| Other                   |       3 |
-
-Corpus: sq
+MaCoCu-mt:
 
 | y_true                  |   count |
 |:------------------------|--------:|
-| Information/Explanation |      15 |
-| Opinion/Argumentation   |      11 |
-| Prose/Lyrical           |      11 |
-| Forum                   |      10 |
-| Legal                   |       9 |
-| Instruction             |       9 |
-| News                    |       8 |
-| Promotion               |       8 |
-| Other                   |       4 |
-| Multiple texts  (3%)        |       3 |
-| Incomprehensible (2%)       |       2 |
-
-Corpus: mt
-
-| y_true                  |   count |
-|:------------------------|--------:|
-| Instruction             |      18 |
-| News                    |      15 |
+| Instruction             |      19 |
+| News                    |      16 |
 | Information/Explanation |      13 |
 | Promotion               |      12 |
 | Legal                   |      10 |
 | Opinion/Argumentation   |       8 |
-| Multiple texts  (0.025%)        |       2 |
+| Multiple texts (3%)         |       2 |
 | Forum                   |       1 |
 | Prose/Lyrical           |       1 |
 
-Corpus: tr
+MaCoCu-el:
 
 | y_true                  |   count |
 |:------------------------|--------:|
-| Opinion/Argumentation   |      12 |
-| Instruction             |      10 |
+| Opinion/Argumentation   |      13 |
+| Information/Explanation |      13 |
+| Forum                   |      11 |
+| Prose/Lyrical           |      10 |
 | Legal                   |      10 |
 | News                    |      10 |
-| Prose/Lyrical           |      10 |
-| Promotion               |       9 |
-| Forum                   |       8 |
-| Information/Explanation |       6 |
-| Multiple texts  (5%)        |       4 |
-| Other   (1.25%)                |       1 |
+| Instruction             |       7 |
+| Promotion               |       6 |
+| Multiple texts (7%)         |       6 |
 
 Number of texts, annotated as problematic ("multiple texts") - mostly, they were not a coherent text (just a list of summaries, multiple texts concatenated):
-- Slovenian, Croatian, Macedonian: 7-8%
-- Albanian, Maltese, Turkish: 3-5% - there were less problematic texts. However, in Albanian sample, there were also some incomprehensible texts - probably due to bad machine translation - 2% of texts.
-
-
-### Comparing y_true and y_pred with F1 scores
-
-For calculating the metrics of classifier's performance, I remove "Other" texts and "Multiple texts" (also "Incomprehensible" in case of Albanian) texts from the sample. Thus, we compare only the predictions of 8 labels.
-
-Frequency of predicted labels after removal of "Other" and "Problematic" texts:
-
-Corpus: mk
-
-| y_pred                  |   count |
-|:------------------------|--------:|
-| Prose/Lyrical           |      10 |
-| Information/Explanation |      10 |
-| Legal                   |      10 |
-| Forum                   |       9 |
-| News                    |       9 |
-| Instruction             |       9 |
-| Promotion               |       9 |
-| Opinion/Argumentation   |       9 |
-
-Corpus: hr
-
-| y_pred                  |   count |
-|:------------------------|--------:|
-| Opinion/Argumentation   |      10 |
-| Forum                   |      10 |
-| Prose/Lyrical           |      10 |
-| News                    |      10 |
-| Promotion               |       9 |
-| Legal                   |       9 |
-| Information/Explanation |       8 |
-| Instruction             |       8 |
-
-Corpus: sl
-
-| y_pred                  |   count |
-|:------------------------|--------:|
-| Legal                   |      10 |
-| Prose/Lyrical           |      10 |
-| Forum                   |      10 |
-| Opinion/Argumentation   |       9 |
-| Instruction             |       9 |
-| Promotion               |       9 |
-| Information/Explanation |       9 |
-| News                    |       8 |
-
-Corpus: sq
-
-| y_pred                  |   count |
-|:------------------------|--------:|
-| Opinion/Argumentation   |      10 |
-| Legal                   |      10 |
-| News                    |      10 |
-| Instruction             |      10 |
-| Prose/Lyrical           |       9 |
-| Promotion               |       9 |
-| Information/Explanation |       8 |
-| Forum                   |       7 |
-
-Corpus: mt
-
-| y_pred                  |   count |
-|:------------------------|--------:|
-| News                    |      10 |
-| Forum                   |      10 |
-| Information/Explanation |      10 |
-| Opinion/Argumentation   |      10 |
-| Legal                   |      10 |
-| Promotion               |      10 |
-| Prose/Lyrical           |       9 |
-| Instruction             |       9 |
-
-Corpus: tr
-
-| y_pred                  |   count |
-|:------------------------|--------:|
-| Instruction             |      10 |
-| Legal                   |      10 |
-| Opinion/Argumentation   |      10 |
-| Forum                   |       9 |
-| News                    |       9 |
-| Information/Explanation |       9 |
-| Prose/Lyrical           |       9 |
-| Promotion               |       9 |
+- Slovenian, Croatian, Macedonian, Icelandic, Greek, Ukrainian: 6-8%
+- Albanian, Maltese, Turkish, Catalan: 3-5% - there were less problematic texts. However, in Albanian sample, there were also some incomprehensible texts - probably due to bad machine translation - 2% of texts.
 
 
 ### Improved sample evaluation - comparison with the first run
