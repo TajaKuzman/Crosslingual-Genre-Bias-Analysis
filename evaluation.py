@@ -61,4 +61,4 @@ def testing(true, pred, labels, show_matrix=True):
     except:
         print("Error when calculating classification report")
     
-    return {"accuracy": accuracy, "micro F1":micro, "macro F1": macro}
+    return {"accuracy": accuracy, "micro F1":micro, "macro F1": macro, "report": report}

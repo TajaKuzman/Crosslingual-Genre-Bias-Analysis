@@ -99,6 +99,27 @@ p-value: 0.40378781012771897
 Spearmans correlation: 0.122
 p-value: 0.7379379712336098
 
+### Per-label scores
+
+Plot for size (in GB) and label F1 scores:
+
+![](figures/size-label-scores-impact.png)
+
+Pearsons correlation: 0.275
+p-value: 0.013539468997046106
+Spearmans correlation: 0.349
+p-value: 0.0015106453984760197
+
+
+Plot for size + related languages (in GB) and label F1 scores:
+
+![](figures/size-related-label-scores-impact.png)
+
+Pearsons correlation: 0.197
+p-value: 0.07932862745724867
+Spearmans correlation: 0.119
+p-value: 0.2919649610699323
+
 ## Token overlap
 
 We tokenised the X-GENRE classifier training set and the test sets with XLM-RoBERTa tokenizer (as the X-GENRE classifier is based on XLM-RoBERTa). For each text, we took only the first 512 tokens, since this is also the max sequence length that can be seen by the X-GENRE classifier. We removed the starting and ending token (s, \s).
