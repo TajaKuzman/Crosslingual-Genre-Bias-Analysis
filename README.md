@@ -5,7 +5,22 @@ Final test corpus which consists of all manually evaluated corpora is: `manual-a
 It is a JSON file with the following values:
 - language: language of the test set. Each language item then consists of the following values:
     - accuracy, micro_f1, macro_f1: the evaluation results in accuracy, micro F1 and macro F1 metric
-    - dataset: the test dataset, which includes the automatically predicted labels (y_pred), the manually-evaluated labels (y_true), text, translation (the translation to English which was used for manual evaluation), text_id (the same as in the original MaCoCu or CLASSLA-web corpora) and metadata. The dataset can be opened as a pandas dataframe: `pd.DataFrame(json_dict["lang"]["dataset"])`
+    - token_overlap: includes the following keys:
+        - overlap_percentage: percentage of overlap with the train dataset (X-GENRE-train),
+        - token_list: list of all tokens from the dataset
+        - overlap_token_list: list of all tokens that appear both in train dataset and test set
+        - token_count: count of all occurrences of tokens in the test set
+        - cosine_similarity: cosine similarity, calculated between the vectors for train dataset and test set, representing the distribution of tokens that occur in either in train dataset or test dataset.
+        - intersection_df: dataframe with the token distribution of token types that occur either in train or test set, based on which cosine similarity is calculated (mentioned above)
+        - intersection_vector_size: number of token types that occur either in train or test dataset
+    - dataset: the test dataset. The dataset can be opened as a pandas dataframe: `pd.DataFrame(json_dict["lang"]["dataset"])`. It includes:
+        - the automatically predicted labels (y_pred),
+        - the manually-evaluated labels (y_true),
+        - text,
+        - translation (the translation to English which was used for manual evaluation),
+        - text_id (the same as in the original MaCoCu or CLASSLA-web corpora)
+        - metadata
+        - list of tokens (tokens) and their token ids (token_ids)
 
 ## Automatically annotated MaCoCu corpora
 

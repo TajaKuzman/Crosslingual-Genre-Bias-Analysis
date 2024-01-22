@@ -61,15 +61,15 @@ sizes_with_related = {
 	}
 ```
 
-Plot of Macro F1 (x-axis) performance and sizes in GB (y-axis), normalized with MinMax normalization:
+Plot of Macro F1 (x-axis) performance and sizes in GB (y-axis):
 
 ![](figures/sizes_impact.png)
 
-Plot of Macro F1 (x-axis) performance and sizes (specific language + related languages) in GB (y-axis), normalized with MinMax normalization:
+Plot of Macro F1 (x-axis) performance and sizes (specific language + related languages) in GB (y-axis):
 
 ![](figures/sizes_with_related_lang_impact.png)
 
-Correlations on dataset-level:
+**Correlations on dataset-level:**
 
 Sizes in tokens:
 
@@ -124,17 +124,59 @@ p-value: 0.2919649610699323
 
 We tokenised the X-GENRE classifier training set and the test sets with XLM-RoBERTa tokenizer (as the X-GENRE classifier is based on XLM-RoBERTa). For each text, we took only the first 512 tokens, since this is also the max sequence length that can be seen by the X-GENRE classifier. We removed the starting and ending token (s, \s).
 
-Then we calculated the overlap of the datasets, where we counter each occurrence of the token from the test set in the training set. We also calculated how many of the words that overlap are non-short - are more than 1 character long.
+We count all the token occurences in the training set. The train dataset has 699.465 tokens and 27.025 unique words. The token count is saved at `datasets/tokenized_datasets/X-GENRE-train-token-count.json`.
 
-| language | percentage | overlap_list | non_short | non_short_per |
-|---:|---:|---:|---:|---:|
-| mt | 0.817085 | ▁Angel, o, ▁Che, t, ,, ▁se, ▁j, kun, d, u, ▁p... | 23083 | 0.723628 |
-| el | 0.161428 | asi, asi, ,, ,, ▁Re, ception, ., ▁driver, ▁es... | 1883 | 0.373389 |
-| tr | 0.521502 | ▁A, L, ▁Der, s, i, ▁ve, ▁Beli, r, leme, ▁S, h... | 11141 | 0.722269 |
-| sq | 0.605775 | ▁Blog, ▁“, U, ▁kam, ▁me, jet, .”, ▁Jer, ▁31, ... | 12459 | 0.768315 |
-| is | 0.517575 | ▁[, is, ], ▁er, fi, ▁reg, ▁sett, ar, lag, sin... | 10915 | 0.711399 |
-| uk | 0.156675 | ., ,, ,, ?, ▁-, ., ?, ▁-, ', ., ,, ., ▁, ▁(, ... | 1258 | 0.253476 |
-| ca | 0.744881 | ▁P, à, gine, s, ▁En, nada, ▁Porto, ▁uns, ▁die... | 15657 | 0.763123 |
-| mk | 0.145989 | ,, ▁T, CL, ,, ▁T, CL, :, ▁Alca, tel, ▁Mobile,... | 1270 | 0.314746 |
-| hr | 0.821517 | ▁O, ▁proizvod, u, ▁Color, ▁Trans, ,, ▁za, ▁pa... | 17678 | 0.810620 |
-| sl | 0.974289 | ▁Kita, jsko, ▁mesto, ▁duhov, ▁V, ▁Notranj, i,... | 21567 | 0.841935 |
+Statistics for number of tokens and types (unique tokens) for train dataset and test sets:
+
+|    |   tokens |   types |
+|:---|---------:|--------:|
+| X-GENRE-train |    699,465 |  27,025  |
+| mt |    39,040 |    4,787 |
+| el |    31,240 |    4,751 |
+| tr |    29,578 |    6,272 |
+| sq |    26,769 |    4,891 |
+| is |    29,644 |    4,615 |
+| uk |    31,677 |    6,507 |
+| ca |    27,544 |    5,314 |
+| mk |    27,639 |    5,468 |
+| hr |    26,546 |    6,222 |
+| sl |    26,292 |    5,763 |
+
+Most frequent unique tokens in test sets:
+
+|    | most_frequent_type                                                                                                                       |
+|:---|:-----------------------------------------------------------------------------------------------------------------------------------------|
+| ca | [(',', 1080), ('▁de', 1014), ('.', 675), ('s', 648), ('▁i', 564), ('▁la', 559), ('▁a', 529), ('▁que', 438), ("'", 360), ('’', 334)]      |
+| el | [('▁', 1017), ('.', 801), (',', 782), ('▁και', 553), ('ς', 525), ('▁να', 351), ('▁το', 321), ('▁του', 292), ('▁την', 268), ('▁με', 264)] |
+| hr | [(',', 878), ('.', 766), ('▁i', 546), ('▁u', 430), ('a', 413), ('▁je', 350), ('▁na', 282), ('▁za', 253), ('▁se', 239), ('e', 219)]       |
+| is | [('.', 1017), ('▁og', 628), ('▁að', 613), (',', 600), ('▁', 528), ('▁í', 434), ('▁á', 388), ('▁er', 357), ('s', 326), ('▁sem', 279)]     |
+| mk | [(',', 1021), ('▁на', 983), ('.', 738), ('▁и', 619), ('▁за', 475), ('▁да', 378), ('▁во', 376), ('▁се', 365), ('▁', 341), ('▁од', 324)]   |
+| mt | [('-', 2119), ('ħ', 1807), (',', 884), ('.', 724), ('▁', 717), ('ġ', 519), ('▁l', 504), ('i', 466), ("'", 462), ('a', 460)]              |
+| sl | [(',', 1154), ('.', 805), ('▁je', 455), ('▁in', 443), ('▁v', 373), ('▁na', 317), ('▁za', 296), ('a', 240), ('▁se', 227), ('▁da', 214)]   |
+| sq | [('▁të', 890), (',', 807), ('▁e', 749), ('.', 641), ('▁në', 420), ('▁dhe', 416), ('▁me', 367), ('▁i', 307), ('t', 268), ('▁për', 266)]   |
+| tr | [('.', 995), (',', 806), ('▁ve', 439), ('▁bir', 265), ("'", 244), ('n', 202), ('▁', 190), ('m', 158), ('i', 144), ('de', 143)]           |
+| uk | [(',', 1352), ('.', 1031), ('▁', 531), ('▁в', 391), ('▁на', 307), ('▁і', 295), ('▁з', 284), ('▁не', 246), ('у', 239), ('і', 237)]        |
+
+Then we calculate cosine similarity of vectors of token distributions, comparing token distribution of train dataset with test set. For each test set, we create a list of token types that appear either in train dataset or test set. Then we create vectors of occurrences of these token types in 1) train dataset, and 2) test set. We calculate cosine similarity between these two vectors. Results:
+
+|    |   cosine_similarity |   vector_size |
+|:---|--------------------:|--------------:|
+| sl |            0.633451 |         27507 |
+| tr |            0.593847 |         30846 |
+| uk |            0.584612 |         33121 |
+| hr |            0.56621  |         28864 |
+| el |            0.527321 |         30954 |
+| ca |            0.525439 |         29443 |
+| is |            0.525135 |         29518 |
+| sq |            0.434489 |         29168 |
+| mk |            0.422532 |         31837 |
+| mt |            0.414248 |         28226 |
+
+### Correlation with Macro F1 (corpus level):
+
+Pearsons correlation: 0.560
+p-value: 0.0926047843840466
+Spearmans correlation: 0.624
+p-value: 0.053717767217167395
+
+![](figures/correlation-token-overlap-cosine-similarity-macro-f1.png)
