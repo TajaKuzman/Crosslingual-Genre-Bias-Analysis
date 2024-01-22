@@ -124,6 +124,8 @@ p-value: 0.2919649610699323
 
 We tokenised the X-GENRE classifier training set and the test sets with XLM-RoBERTa tokenizer (as the X-GENRE classifier is based on XLM-RoBERTa). For each text, we took only the first 512 tokens, since this is also the max sequence length that can be seen by the X-GENRE classifier. We removed the starting and ending token (s, \s).
 
+### Corpus-level
+
 We count all the token occurences in the training set. The train dataset has 699.465 tokens and 27.025 unique words. The token count is saved at `datasets/tokenized_datasets/X-GENRE-train-token-count.json`.
 
 Statistics for number of tokens and types (unique tokens) for train dataset and test sets:
@@ -172,7 +174,7 @@ Then we calculate cosine similarity of vectors of token distributions, comparing
 | mk |            0.422532 |         31837 |
 | mt |            0.414248 |         28226 |
 
-### Correlation with Macro F1 (corpus level):
+#### Correlation with Macro F1 (corpus level):
 
 Pearsons correlation: 0.560
 p-value: 0.0926047843840466
@@ -180,3 +182,20 @@ Spearmans correlation: 0.624
 p-value: 0.053717767217167395
 
 ![](figures/correlation-token-overlap-cosine-similarity-macro-f1.png)
+
+### Label-level
+
+We do the same as above, but separate all datasets according to genres, and calculate token overlap for each genre separatedly.
+
+Number of tokens and types (unique tokens) in training dataset:
+
+|                         |   token_count |   type_count |
+|:------------------------|--------------:|-------------:|
+| Information/Explanation |        124130 |        14678 |
+| News                    |        136557 |        15319 |
+| Instruction             |         83750 |         8929 |
+| Opinion/Argumentation   |        103141 |        13088 |
+| Forum                   |         58900 |         8555 |
+| Prose/Lyrical           |         46860 |         5990 |
+| Legal                   |         28496 |         4425 |
+| Promotion               |         88626 |        12548 |
