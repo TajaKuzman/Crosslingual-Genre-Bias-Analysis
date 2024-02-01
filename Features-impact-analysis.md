@@ -1,3 +1,33 @@
+## Corelation of genre frequency
+
+Pearson and Spearman correlation for genre frequency for all corpora
+
+According to p-value in Pearson correlation, higher than 0.05:
+
+|                                       |   Pearson |   Pearson-p-value |   Spearman |   Spearman-p-value |
+|:--------------------------------------|----------:|------------------:|-----------:|-------------------:|
+| News-Information/Explanation          | -0.875348 |       4.11861e-05 |  -0.806593 |        0.000491113 |
+| News-Forum                            | -0.707912 |       0.00461391  |  -0.564835 |        0.0353302   |
+| Prose/Lyrical-Instruction             | -0.658999 |       0.0103677   |  -0.336264 |        0.239792    |
+| News-Prose/Lyrical                    | -0.642166 |       0.0132784   |  -0.213187 |        0.464303    |
+| News-Opinion/Argumentation            | -0.587845 |       0.0270476   |  -0.516484 |        0.0586372   |
+| Prose/Lyrical-Promotion               | -0.583297 |       0.028556    |  -0.389011 |        0.169217    |
+| Forum-Information/Explanation         |  0.538151 |       0.047128    |   0.217582 |        0.454919    |
+| Forum-Opinion/Argumentation           |  0.566594 |       0.0346383   |   0.476923 |        0.0846484   |
+| Forum-Prose/Lyrical                   |  0.622027 |       0.0175389   |   0.340659 |        0.233316    |
+| Instruction-Promotion                 |  0.6428   |       0.0131586   |   0.63956  |        0.0137796   |
+| Promotion-Legal                       |  0.705183 |       0.00484659  |   0.696703 |        0.00562868  |
+| Information/Explanation-Prose/Lyrical |  0.827685 |       0.000257882 |   0.138462 |        0.636885    |
+
+Correlations with p-value < 0.05 according to Spearman correlation:
+
+|                              |   Pearson |   Pearson-p-value |   Spearman |   Spearman-p-value |
+|:-----------------------------|----------:|------------------:|-----------:|-------------------:|
+| News-Information/Explanation | -0.875348 |       4.11861e-05 |  -0.806593 |        0.000491113 |
+| News-Forum                   | -0.707912 |       0.00461391  |  -0.564835 |        0.0353302   |
+| Instruction-Promotion        |  0.6428   |       0.0131586   |   0.63956  |        0.0137796   |
+| Legal-Promotion              |  0.705183 |       0.00484659  |   0.696703 |        0.00562868  |
+
 ## Data Sizes in XLM-R Pretraining
 
 
@@ -126,23 +156,24 @@ We tokenised the X-GENRE classifier training set and the test sets with XLM-RoBE
 
 ### Corpus-level
 
-We count all the token occurences in the training set. The train dataset has 699.465 tokens and 27.025 unique words. The token count is saved at `datasets/tokenized_datasets/X-GENRE-train-token-count.json`.
+We count all occurences of the tokens from the test set in the training set. The train dataset has 699.465 tokens and 27.025 unique words. The token count is saved at `datasets/tokenized_datasets/X-GENRE-train-token-count.json`.
 
-Statistics for number of tokens and types (unique tokens) for train dataset and test sets:
+Overlap percentage: percentage of all tokens from the test set that occur in the training set. Calculated in such manner that we counted all tokens from test set that do not appear in training set and divided by number of all tokens from the test set to get "no overlap" percentage, then calculated the overlap percentage by "1-no_overlap_percentage".
 
-|    |   tokens |   types |
-|:---|---------:|--------:|
-| X-GENRE-train |    699,465 |  27,025  |
-| mt |    39,040 |    4,787 |
-| el |    31,240 |    4,751 |
-| tr |    29,578 |    6,272 |
-| sq |    26,769 |    4,891 |
-| is |    29,644 |    4,615 |
-| uk |    31,677 |    6,507 |
-| ca |    27,544 |    5,314 |
-| mk |    27,639 |    5,468 |
-| hr |    26,546 |    6,222 |
-| sl |    26,292 |    5,763 |
+Statistics for number of all tokens and types (unique tokens) and overlapping tokens and types, and the overlap percentage:
+
+|    |   overlap percentage |   all_tokens |   overlapping_tokens |   all_types |   overlapping_types |
+|:---|---------------------:|-------------:|---------------------:|------------:|--------------------:|
+| mt |             0.817085 |        39040 |                31899 |        4787 |                3586 |
+| el |             0.161428 |        31240 |                 5043 |        4751 |                 822 |
+| tr |             0.521502 |        29578 |                15425 |        6272 |                2451 |
+| sq |             0.605775 |        26769 |                16216 |        4891 |                2748 |
+| is |             0.517575 |        29644 |                15343 |        4615 |                2122 |
+| uk |             0.156675 |        31677 |                 4963 |        6507 |                 411 |
+| ca |             0.744881 |        27544 |                20517 |        5314 |                2896 |
+| mk |             0.145989 |        27639 |                 4035 |        5468 |                 656 |
+| hr |             0.821517 |        26546 |                21808 |        6222 |                4383 |
+| sl |             0.974289 |        26292 |                25616 |        5763 |                5281 |
 
 Most frequent unique tokens in test sets:
 
@@ -159,7 +190,7 @@ Most frequent unique tokens in test sets:
 | tr | [('.', 995), (',', 806), ('▁ve', 439), ('▁bir', 265), ("'", 244), ('n', 202), ('▁', 190), ('m', 158), ('i', 144), ('de', 143)]           |
 | uk | [(',', 1352), ('.', 1031), ('▁', 531), ('▁в', 391), ('▁на', 307), ('▁і', 295), ('▁з', 284), ('▁не', 246), ('у', 239), ('і', 237)]        |
 
-Then we calculate cosine similarity of vectors of token distributions, comparing token distribution of train dataset with test set. For each test set, we create a list of token types that appear either in train dataset or test set. Then we create vectors of occurrences of these token types in 1) train dataset, and 2) test set. We calculate cosine similarity between these two vectors. Results:
+Another idea: we calculate cosine similarity of vectors of token distributions, comparing token distribution of train dataset with test set. For each test set, we create a list of token types that appear either in train dataset or test set. Then we create vectors of occurrences of these token types in 1) train dataset, and 2) test set. We calculate cosine similarity between these two vectors. Results:
 
 |    |   cosine_similarity |   vector_size |
 |:---|--------------------:|--------------:|
