@@ -154,7 +154,7 @@ p-value: 0.2919649610699323
 
 We tokenised the X-GENRE classifier training set and the test sets with XLM-RoBERTa tokenizer (as the X-GENRE classifier is based on XLM-RoBERTa). For each text, we took only the first 512 tokens, since this is also the max sequence length that can be seen by the X-GENRE classifier. We removed the starting and ending token (s, \s).
 
-### Corpus-level
+#### Corpus-level
 
 We count all occurences of the tokens from the test set in the training set. The train dataset has 699.465 tokens and 27.025 unique words. The token count is saved at `datasets/tokenized_datasets/X-GENRE-train-token-count.json`.
 
@@ -190,31 +190,8 @@ Most frequent unique tokens in test sets:
 | tr | [('.', 995), (',', 806), ('▁ve', 439), ('▁bir', 265), ("'", 244), ('n', 202), ('▁', 190), ('m', 158), ('i', 144), ('de', 143)]           |
 | uk | [(',', 1352), ('.', 1031), ('▁', 531), ('▁в', 391), ('▁на', 307), ('▁і', 295), ('▁з', 284), ('▁не', 246), ('у', 239), ('і', 237)]        |
 
-Another idea: we calculate cosine similarity of vectors of token distributions, comparing token distribution of train dataset with test set. For each test set, we create a list of token types that appear either in train dataset or test set. Then we create vectors of occurrences of these token types in 1) train dataset, and 2) test set. We calculate cosine similarity between these two vectors. Results:
 
-|    |   cosine_similarity |   vector_size |
-|:---|--------------------:|--------------:|
-| sl |            0.633451 |         27507 |
-| tr |            0.593847 |         30846 |
-| uk |            0.584612 |         33121 |
-| hr |            0.56621  |         28864 |
-| el |            0.527321 |         30954 |
-| ca |            0.525439 |         29443 |
-| is |            0.525135 |         29518 |
-| sq |            0.434489 |         29168 |
-| mk |            0.422532 |         31837 |
-| mt |            0.414248 |         28226 |
-
-#### Correlation with Macro F1 (corpus level):
-
-Pearsons correlation: 0.560
-p-value: 0.0926047843840466
-Spearmans correlation: 0.624
-p-value: 0.053717767217167395
-
-![](figures/correlation-token-overlap-cosine-similarity-macro-f1.png)
-
-### Label-level
+#### Label-level
 
 We do the same as above, but separate all datasets according to genres, and calculate token overlap for each genre separatedly.
 
@@ -230,3 +207,48 @@ Number of tokens and types (unique tokens) in training dataset:
 | Prose/Lyrical           |         46860 |         5990 |
 | Legal                   |         28496 |         4425 |
 | Promotion               |         88626 |        12548 |
+
+### Token overlap, calculated on normalized and transliterated texts
+
+We transliterated Cyrillic and Greek script to Latin using [cyrtranslit](https://github.com/opendatakosovo/cyrillic-transliteration) and [transliterate](https://pypi.org/project/transliterate/) Python libraries. Then we also lowercased all texts and normalized all language-specific characters using the [unidecode](https://pypi.org/project/Unidecode/).
+
+The idea of analysing normalized token overlap is in this that by transliterating all characters to Latin, we get closer to what is the semantic overlap (tokens representing units that carry meaning).
+
+|    |   percentage |   overlap_list_size |   overlap_set_size |
+|:---|-------------:|--------------------:|-------------------:|
+| sl |     0.983558 |               26320 |               4485 |
+| mt |     0.908776 |               35146 |               3691 |
+| mk |     0.905123 |               27704 |               3293 |
+| uk |     0.900191 |               31991 |               2957 |
+| el |     0.895228 |               29231 |               2567 |
+| hr |     0.873856 |               23588 |               3917 |
+| ca |     0.810781 |               22290 |               2666 |
+| is |     0.809069 |               24586 |               2447 |
+| sq |     0.779926 |               21175 |               2597 |
+| tr |     0.729727 |               22623 |               2468 |
+
+### Based on cosine similarity
+
+Another idea: we calculate cosine similarity of vectors of token distributions, comparing token distribution of train dataset with test set. For each test set, we create a list of token types that appear either in train dataset or test set. Then we create vectors of occurrences of these token types in 1) train dataset, and 2) test set. We calculate cosine similarity between these two vectors. Results:
+
+|    |   cosine_similarity |   vector_size |
+|:---|--------------------:|--------------:|
+| sl |            0.633451 |         27507 |
+| tr |            0.593847 |         30846 |
+| uk |            0.584612 |         33121 |
+| hr |            0.56621  |         28864 |
+| el |            0.527321 |         30954 |
+| ca |            0.525439 |         29443 |
+| is |            0.525135 |         29518 |
+| sq |            0.434489 |         29168 |
+| mk |            0.422532 |         31837 |
+| mt |            0.414248 |         28226 |
+
+Correlation with Macro F1 (corpus level):
+
+Pearsons correlation: 0.560
+p-value: 0.0926047843840466
+Spearmans correlation: 0.624
+p-value: 0.053717767217167395
+
+![](figures/correlation-token-overlap-cosine-similarity-macro-f1.png)
