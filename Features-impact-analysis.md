@@ -252,3 +252,17 @@ Spearmans correlation: 0.624
 p-value: 0.053717767217167395
 
 ![](figures/correlation-token-overlap-cosine-similarity-macro-f1.png)
+
+
+## Syntactic similarity - lang2vec
+
+Syntax - WALS
+
+|    |   slv |   hrv |   srp |   hbs |   mkd |   bul |   isl |   tur |   ukr |   cat |   ell |   mlt |   alb |
+|---:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|
+| 12 |   nan |   nan |   nan |   nan |   nan |   nan |     1 |     0 |     1 |   nan |     1 |     1 |   nan |
+| 13 |   nan |   nan |   nan |   nan |   nan |   nan |     1 |     0 |     1 |   nan |     1 |     1 |   nan |
+| 66 |   nan |   nan |   nan |   nan |   nan |   nan |     1 |     0 |   nan |     0 |     0 |     1 |     0 |
+| 69 |   nan |   nan |   nan |   nan |   nan |     1 |     0 |     1 |   nan |   nan |     1 |     1 |   nan |
+| 70 |   nan |   nan |   nan |   nan |   nan |     1 |     1 |     1 |   nan |   nan |     1 |     1 |   nan |
+| 71 |   nan |   nan |   nan |   nan |   nan |     0 |     0 |     1 |   nan |   nan |     0 |     0 |   nan |
