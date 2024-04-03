@@ -1,0 +1,17 @@
+pip install beautifulsoup4
+pip install googletrans
+pip install huggingface_hub
+pip install lang2vec
+pip install matplotlib
+pip install numpy
+pip install pandas
+pip install prevert
+pip install scikit-learn
+pip install scipy
+pip install tabulate
+pip install torch
+pip install torchaudio
+pip install torchvision
+pip install tqdm
+pip install transformers
+pip install transliterate

@@ -2,17 +2,9 @@
 
 Final test corpus which consists of all manually evaluated corpora is: `manual-annotations/multilingual-genre-annotated-test-set.json`
 
-It is a JSON file with the following values:
-- language: language of the test set. Each language item then consists of the following values:
+It is a JSON file with the following languages as keys. Each language item then consists of the following values:
     - accuracy, micro_f1, macro_f1: the evaluation results in accuracy, micro F1 and macro F1 metric
-    - token_overlap: includes the following keys:
-        - overlap_percentage: percentage of overlap with the train dataset (X-GENRE-train),
-        - token_list: list of all tokens from the dataset
-        - overlap_token_list: list of all tokens that appear both in train dataset and test set
-        - token_count: count of all occurrences of tokens in the test set
-        - cosine_similarity: cosine similarity, calculated between the vectors for train dataset and test set, representing the distribution of tokens that occur in either in train dataset or test dataset.
-        - intersection_df: dataframe with the token distribution of token types that occur either in train or test set, based on which cosine similarity is calculated (mentioned above)
-        - intersection_vector_size: number of token types that occur either in train or test dataset
+    - label_scores: per label F1 scores
     - dataset: the test dataset. The dataset can be opened as a pandas dataframe: `pd.DataFrame(json_dict["lang"]["dataset"])`. It includes:
         - the automatically predicted labels (y_pred),
         - the manually-evaluated labels (y_true),
@@ -21,6 +13,11 @@ It is a JSON file with the following values:
         - text_id (the same as in the original MaCoCu or CLASSLA-web corpora)
         - metadata
         - list of tokens (tokens) and their token ids (token_ids)
+    - token_overlap: includes the following keys:
+        - overlap_percentage: percentage of overlap with the train dataset (X-GENRE-train)
+        - token_list: list of all tokens from the dataset
+        - overlap_token_list: list of all tokens that appear both in train dataset and test set
+        - label_level_token_lists: list of all tokens from the dataset for each of the labels
 
 ## Automatically annotated MaCoCu corpora
 
@@ -30,50 +27,12 @@ See the [spreadsheet CLASSLA genres](https://docs.google.com/spreadsheets/d/1-jZ
 
 We use the code `1-select_for_xgenre.py` and `2-predict_extended.py` in `/cache/tajak/macocu-mt/`. The automatically annotated datasets are saved in `/cache/tajak/macocu-mt/datasets/annotated`.
 
-
-### Download and unzip the relevant corpora
-
-Run the following:
-1. download the dataset: `curl -s --remote-name-all path`
-2. unzip the dataset: `unzip -q downloaded_file`
-3. remove the zipped dataset: `rm downloaded_file`
-4. extract TSV file with texts that are longer than 75 words: `CUDA_VISIBLE_DEVICES=7 nohup python 1-select_for_xgenre.py "MaCoCu-mt-2.0.xml" > extraction.log &` Only the first 512 words are taken of each text. The paragraphs are separated by the `<p>` tag. The resulting file is dataset name, but with .tsv suffix (e.g., "MaCoCu-mt-2.0.tsv")
-5. predict genres to all texts in the TSV file: `CUDA_VISIBLE_DEVICES=7 nohup python 2-predict_extended.py "MaCoCu-mt-2.0.tsv" > prediction.log &` The output is dataset name with "genre-annotated.jsonl" suffix (e.g., "MaCoCu-mt-2.0.tsv-genre-annotated.jsonl") in the `datasets/annotated` directory.
-6. Extract a genre sample that will be used for manual evaluation: use the script `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` There are two outputs:
-    - `/datasets/annotated/MaCoCu-{suffix}-genre-sample.jsonl` - the genre sample with all information
-    - `/datasets/annotated/MaCoCu-{}-genre-sample-for-annotation-tool.jsonl` - the genre sample, prepared to be imported to the Docanno annotation tool (without source text and with less information)
-7. Evaluate the sample after annotation: `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb`
-8. If needed, annotate additional instances: see section `Add additional instances to the sample to achieve 10 instances per label` in `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` to prepare additional instances; and section `Add additionally annotated instances` in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to merge them with initial sample and get final evaluations.
-
-In case of CLASSLA-web corpora, we used the corpora that had the genre already predicted (with the same approach) and that were saved in VERT file. See section `Prepare similar JSONL corpora from CLASSLA corpora` in `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` to see how the corpora were transformed from VERT format to a JSONL format. The JSONL format is the same as the one that is used for MaCoCu corpora, so all further steps can then be applied to the corpora in the same manner.
+See the code in `copied-code-from-cache` and the [README.md](copied-code-from-cache/README.md) file in the same folder for all documentation on how the corpora were annotated and samples were prepared. After annotation the following steps were done:
+- Evaluate the sample after annotation: `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb`
+- If needed, annotate additional instances: see section `Add additional instances to the sample to achieve 10 instances per label` in `/cache/tajak/macocu-mt/analyze-entire-file-prepare-sample.ipynb` to prepare additional instances; and section `Add additionally annotated instances` in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to merge them with initial sample and get final evaluations.
 
 Output:
 - `manual-annotations/MaCoCu-{lang}-genre-sample-evaluated-complete-sample.jsonl` - manually evaluated samples (or `MaCoCu-{lang}-genre-sample-evaluated-complete-sample-run2.jsonl` in case there were two rounds of adding additional instances)- initial samples + additional instances (so that each label was evaluated on 10 instances); Multiple texts and Other texts are marked, but included in the sample - use the code in `/home/tajak/Crosslingual-Genre-Bias-Analysis/evaluation-of-annotation.ipynb` to discard them and evaluate them.
-
-
-Here are the paths to the files:
-```json
-corpora_location='{
-    "mt": {
-        "path":"https://www.clarin.si/repository/xmlui/bitstream/handle/11356/1803/MaCoCu-mt-2.0.xml.zip",
-        "downloaded_file": "MaCoCu-mt-2.0.xml.zip"},
-    "ca": {
-        "path":"https://www.clarin.si/repository/xmlui/bitstream/handle/11356/1837/MaCoCu-ca-1.0.xml.zip",
-        "downloaded_file": "MaCoCu-ca-1.0.xml.zip"},
-    "el": {
-        "path":"https://www.clarin.si/repository/xmlui/bitstream/handle/11356/1839/MaCoCu-el-1.0.xml.zip",
-        "downloaded_file": "MaCoCu-el-1.0.xml.zip"},
-    "is": {
-        "path":"https://www.clarin.si/repository/xmlui/bitstream/handle/11356/1805/MaCoCu-is-2.0.xml.zip",
-        "downloaded_file": "MaCoCu-is-2.0.xml.zip"},
-    "tr": {
-        "path":"https://www.clarin.si/repository/xmlui/bitstream/handle/11356/1802/MaCoCu-tr-2.0.xml.zip",
-        "downloaded_file": "MaCoCu-tr-2.0.xml.zip"},
-    "uk": {
-        "path":"https://www.clarin.si/repository/xmlui/bitstream/handle/11356/1838/MaCoCu-uk-1.0.xml.zip",
-        "downloaded_file": "MaCoCu-uk-1.0.xml.zip"},
-    }'
-```
 
 ### Genre sample preparation
 
@@ -90,26 +49,26 @@ Then we translate the source text in the sample to English using Google Translat
 | MaCoCu-uk | 0.948     | 0.950     |
 | CLASSLA.web-sl | 0.936     | 0.938     |
 | CLASSLA.web-mk | 0.932     | 0.925     |
-| MaCoCu-tr | 0.899     | 0.9     |
+| MaCoCu-tr |  0.899    |  0.9    |
 | CLASSLA.web-hr | 0.883     | 0.887     |
-| MaCoCu-sq | 0.866    | 0.863     |
-| MaCoCu-el | 0.844     | 0.850     |
+| MaCoCu-sq | 0.854    | 0.850     |
+| MaCoCu-el |   0.844   |   0.850   |
 | MaCoCu-ca | 0.827     | 0.825     |
-| MaCoCu-is | 0.810     | 0.812     |
-| MaCoCu-mt | 0.552     | 0.613     |
+| MaCoCu-is | 0.795     | 0.8     |
+| MaCoCu-mt | 0.488     | 0.557     |
 
-Per-label F1 scores:
 
-|                         |   mt |   el |   tr |   sq |   is |   uk |   ca |   mk |   hr |   sl |   average |   average-wth-mt |
-|:------------------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|----------:|-----------------:|
-| News                    | 0.69 | 0.9  | 0.95 | 0.89 | 0.73 | 1    | 0.82 | 0.91 | 0.95 | 0.9  |      0.87 |             0.89 |
-| Opinion/Argumentation   | 0.33 | 0.87 | 0.82 | 0.7  | 0.82 | 0.91 | 0.84 | 0.78 | 0.78 | 0.82 |      0.77 |             0.81 |
-| Instruction             | 0.69 | 0.71 | 0.9  | 0.95 | 0.78 | 0.95 | 0.75 | 1    | 0.75 | 1    |      0.85 |             0.86 |
-| Information/Explanation | 0.52 | 0.7  | 0.82 | 0.8  | 0.59 | 1    | 0.72 | 0.84 | 0.95 | 0.9  |      0.78 |             0.81 |
-| Promotion               | 0.82 | 0.62 | 0.86 | 0.95 | 0.78 | 0.78 | 0.78 | 0.95 | 0.87 | 1    |      0.84 |             0.84 |
-| Legal                   | 1    | 1    | 1    | 0.95 | 0.84 | 1    | 0.95 | 0.95 | 1    | 0.95 |      0.96 |             0.96 |
-| Forum                   | 0.18 | 0.95 | 0.89 | 0.84 | 0.95 | 0.95 | 0.84 | 1    | 0.91 | 1    |      0.85 |             0.92 |
-| Prose/Lyrical           | 0.18 | 1    | 0.95 | 0.86 | 1    | 1    | 0.91 | 0.95 | 0.86 | 0.91 |      0.86 |             0.93 |
+|                         |     mt |   el |   tr |   sq |   is |   uk |   ca |   mk |   hr |   sl |   average |   average-wth-mt |
+|:------------------------|-------:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|----------:|-----------------:|
+| News                    |   0.69 | 0.9  | 0.95 | 0.89 | 0.73 | 1    | 0.82 | 0.91 | 0.95 | 0.9  |      0.87 |             0.89 |
+| Opinion/Argumentation   |   0.33 | 0.87 | 0.82 | 0.67 | 0.82 | 0.91 | 0.84 | 0.78 | 0.78 | 0.82 |      0.76 |             0.81 |
+| Instruction             |   0.69 | 0.71 | 0.9  | 0.95 | 0.78 | 0.95 | 0.75 | 1    | 0.75 | 1    |      0.85 |             0.86 |
+| Information/Explanation |   0.52 | 0.7  | 0.82 | 0.8  | 0.5  | 1    | 0.72 | 0.84 | 0.95 | 0.9  |      0.78 |             0.8  |
+| Promotion               |   0.82 | 0.62 | 0.86 | 0.95 | 0.75 | 0.78 | 0.78 | 0.95 | 0.87 | 1    |      0.84 |             0.84 |
+| Forum                   |   0.18 | 0.95 | 0.89 | 0.78 | 0.95 | 0.95 | 0.84 | 1    | 0.91 | 1    |      0.84 |             0.91 |
+| Prose/Lyrical           |   0.18 | 1    | 0.95 | 0.86 | 1    | 1    | 0.91 | 0.95 | 0.86 | 0.91 |      0.86 |             0.93 |
+| Legal                   | nan    | 1    | 1    | 0.95 | 0.84 | 1    | 0.95 | 0.95 | 1    | 0.95 |      0.96 |             0.96 |
+| Macro F1                |   0.49 | 0.84 | 0.9  | 0.85 | 0.8  | 0.95 | 0.83 | 0.92 | 0.88 | 0.94 |      0.84 |             0.87 |
 
 
 ### CLASSLA.web-sl
@@ -162,56 +121,53 @@ Macro f1: 0.923, Micro f1: 0.925, Accuracy: 0.925
 | Promotion               |     1       | 0.909091 |   0.952381 |    11     |
 | Prose/Lyrical           |     1       | 0.909091 |   0.952381 |    11     |
 
-### Corpus: MaCoCu-sq
-
-Macro f1: 0.866, Micro f1: 0.863, Accuracy: 0.863
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |      0.8    | 0.888889 |   0.842105 |    9      |
-| Information/Explanation |      1      | 0.666667 |   0.8      |   15      |
-| Instruction             |      0.9    | 1        |   0.947368 |    9      |
-| Legal                   |      0.9    | 1        |   0.947368 |    9      |
-| News                    |      0.8    | 1        |   0.888889 |    8      |
-| Opinion/Argumentation   |      0.7    | 0.7      |   0.7      |   10      |
-| Promotion               |      0.9    | 1        |   0.947368 |    9      |
-| Prose/Lyrical           |      0.9    | 0.818182 |   0.857143 |   11      |
-
-![](figures/MaCoCu-sq-evaluation.png)
-
-
 ### Corpus: MaCoCu-mt
 
-Macro f1: 0.552, Micro f1: 0.613, Accuracy: 0.613
+Macro f1: 0.488, Micro f1: 0.557 Accuracy: 0.557
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |      0.1    | 1        |   0.181818 |    1      |
-| Information/Explanation |      0.6    | 0.461538 |   0.521739 |   13      |
-| Instruction             |      1      | 0.526316 |   0.689655 |   19      |
-| Legal                   |      1      | 1        |   1        |   10      |
-| News                    |      0.9    | 0.5625   |   0.692308 |   16      |
-| Opinion/Argumentation   |      0.3    | 0.375    |   0.333333 |    8      |
-| Promotion               |      0.9    | 0.75     |   0.818182 |   12      |
-| Prose/Lyrical           |      0.1    | 1        |   0.181818 |    1      |
+| Forum                   |    0.1      | 1        |   0.181818 |  1        |
+| Information/Explanation |    0.6      | 0.461538 |   0.521739 | 13        |
+| Instruction             |    1        | 0.526316 |   0.689655 | 19        |
+| News                    |    0.9      | 0.5625   |   0.692308 | 16        |
+| Opinion/Argumentation   |    0.3      | 0.375    |   0.333333 |  8        |
+| Promotion               |    0.9      | 0.75     |   0.818182 | 12        |
+| Prose/Lyrical           |    0.1      | 1        |   0.181818 |  1        |
 
-![](figures/MaCoCu-mt-evaluation.png)
+![](figures/MaCoCu-mt-matrix.png)
 
+### MaCoCu-sq
 
-### Corpus: MaCoCu-tr
-
-Macro f1: 0.899, Micro f1: 0.9, Accuracy: 0.9
+Macro f1: 0.854, Micro f1: 0.85 Accuracy: 0.85
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |      0.8    | 1        |   0.888889 |       8   |
-| Information/Explanation |      0.7    | 1        |   0.823529 |       7   |
-| Instruction             |      0.9    | 0.9      |   0.9      |      10   |
-| Legal                   |      1      | 1        |   1        |      10   |
-| News                    |      1      | 0.909091 |   0.952381 |      11   |
-| Opinion/Argumentation   |      0.9    | 0.75     |   0.818182 |      12   |
-| Promotion               |      0.9    | 0.818182 |   0.857143 |      11   |
-| Prose/Lyrical           |      1      | 0.909091 |   0.952381 |      11   |
+| Forum                   |     0.7     | 0.875    |   0.777778 |      8    |
+| Information/Explanation |     1       | 0.666667 |   0.8      |     15    |
+| Instruction             |     0.9     | 1        |   0.947368 |      9    |
+| Legal                   |     0.9     | 1        |   0.947368 |      9    |
+| News                    |     0.8     | 1        |   0.888889 |      8    |
+| Opinion/Argumentation   |     0.7     | 0.636364 |   0.666667 |     11    |
+| Promotion               |     0.9     | 1        |   0.947368 |      9    |
+| Prose/Lyrical           |     0.9     | 0.818182 |   0.857143 |     11    |
+
+![](figures/MaCoCu-sq-matrix.png)
+
+### MaCoCu-is
+
+Macro f1: 0.795, Micro f1: 0.8 Accuracy: 0.8
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |     0.9     | 1        |   0.947368 |       9   |
+| Information/Explanation |     0.4     | 0.666667 |   0.5      |       6   |
+| Instruction             |     0.7     | 0.875    |   0.777778 |       8   |
+| Legal                   |     0.8     | 0.888889 |   0.842105 |       9   |
+| News                    |     0.8     | 0.666667 |   0.727273 |      12   |
+| Opinion/Argumentation   |     0.9     | 0.75     |   0.818182 |      12   |
+| Promotion               |     0.9     | 0.642857 |   0.75     |      14   |
+| Prose/Lyrical           |     1       | 1        |   1        |      10   |
 
 ### MaCoCu-el
 
@@ -228,24 +184,9 @@ Macro f1: 0.844, Micro f1: 0.85, Accuracy: 0.85
 | Promotion               |      0.5    | 0.833333 |   0.625    |      6    |
 | Prose/Lyrical           |      1      | 1        |   1        |     10    |
 
-### MaCoCu-is
-
-Macro f1: 0.81, Micro f1: 0.812, Accuracy: 0.812
-
-|                         |   precision |   recall |   f1-score |   support |
-|:------------------------|------------:|---------:|-----------:|----------:|
-| Forum                   |     0.9     | 1        |   0.947368 |    9      |
-| Information/Explanation |     0.5     | 0.714286 |   0.588235 |    7      |
-| Instruction             |     0.7     | 0.875    |   0.777778 |    8      |
-| Legal                   |     0.8     | 0.888889 |   0.842105 |    9      |
-| News                    |     0.8     | 0.666667 |   0.727273 |   12      |
-| Opinion/Argumentation   |     0.9     | 0.75     |   0.818182 |   12      |
-| Promotion               |     0.9     | 0.692308 |   0.782609 |   13      |
-| Prose/Lyrical           |     1       | 1        |   1        |   10      |
-
 ### MaCoCu-ca
 
-Macro f1: 0.827, Micro f1: 0.825, Accuracy: 0.825
+Macro f1: 0.827, Micro f1: 0.825 Accuracy: 0.825
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
@@ -258,9 +199,24 @@ Macro f1: 0.827, Micro f1: 0.825, Accuracy: 0.825
 | Promotion               |      0.9    | 0.692308 |   0.782609 |    13     |
 | Prose/Lyrical           |      1      | 0.833333 |   0.909091 |    12     |
 
+### MaCoCu-tr
+
+Macro f1: 0.899, Micro f1: 0.9 Accuracy: 0.9
+
+|                         |   precision |   recall |   f1-score |   support |
+|:------------------------|------------:|---------:|-----------:|----------:|
+| Forum                   |      0.8    | 1        |   0.888889 |       8   |
+| Information/Explanation |      0.7    | 1        |   0.823529 |       7   |
+| Instruction             |      0.9    | 0.9      |   0.9      |      10   |
+| Legal                   |      1      | 1        |   1        |      10   |
+| News                    |      1      | 0.909091 |   0.952381 |      11   |
+| Opinion/Argumentation   |      0.9    | 0.75     |   0.818182 |      12   |
+| Promotion               |      0.9    | 0.818182 |   0.857143 |      11   |
+| Prose/Lyrical           |      1      | 0.909091 |   0.952381 |      11   |
+
 ### MaCoCu-uk
 
-Macro f1: 0.948, Micro f1: 0.95, Accuracy: 0.95
+Macro f1: 0.948, Micro f1: 0.95 Accuracy: 0.95
 
 |                         |   precision |   recall |   f1-score |   support |
 |:------------------------|------------:|---------:|-----------:|----------:|
@@ -272,7 +228,6 @@ Macro f1: 0.948, Micro f1: 0.95, Accuracy: 0.95
 | Opinion/Argumentation   |     1       | 0.833333 |   0.909091 |     12    |
 | Promotion               |     0.7     | 0.875    |   0.777778 |      8    |
 | Prose/Lyrical           |     1       | 1        |   1        |     10    |
-
 
 ## More information on sample evaluation
 
@@ -292,7 +247,7 @@ This is the distribution after the additionally evaluated instances were added.
 
 For calculating the metrics of classifier's performance, I remove "Other" texts and "Multiple texts" (also "Incomprehensible" in case of Albanian) texts from the sample. Thus, we compare only the predictions of 8 labels, each having 10 instances.
 
-Initial distribution (before post-processing):
+Initial distribution (before post-processing) - OLD RESULTS (before cleaning non-target languages):
 
 MaCoCu-mt:
 
