@@ -155,7 +155,14 @@ Results on y_true and predictions on various variations of the same text - merge
 The biggest changes in macro F1 scores are in the case of shuffling text (15 points less), removing structural markings (all words that contain digits + punctuation + lowercasing everything - 15 points less), removal of 50% of words (12 points less) and translation (into English - 10 points less).
 
 In terms of genres, the following scenarios incur the highest decreases in F1 scores:
-- News: shuffling (-18 points), removal of all words with capital letters (-12 points), punctuation removal (-11 points), translation (-11 points)
+- News: shuffling (-18 points), structural markings removal (-16 points), removal of 50% of words (-13 points), removal of all words with capital letters (-12 points), punctuation removal (-11 points), translation (-11 points)
+- Opinion/Argumentation: shuffling (-35 points), removal of 50% of words (-24 points), translation (-22 points), structural markings removal (-21 points), punctuation removal (-21 points), removal of all words with capital letters (-15 points)
+- Instruction: shuffling (-21 points), structural markings removal (-18 points), removal of 50% of words (-16 points), punctuation removal (-10 points)
+- Information/Explanation: structural markings removal (-16 points), shuffling (-11 points)
+- Promotion: translation (-15 points), structural markings removal (-11 points)
+- Forum: translation (-20 points), shuffling (-14 points), structural markings removal (-14 points), punctuation removal (-13 points), 50% of words removal (-11 points), capital letters removal (-10 points)
+- Prose/Lyrical: no change incurred a drop in more than 10 points, highest drop: removal of structural markings (-9 points)
+- Legal: removal of structural markings (-17 points), removal of 50% of words (-13 points)
 
 |                                                   |   macro_F1 |    News_F1 |   Opinion/Argumentation_F1 |   Instruction_F1 |   Information/Explanation_F1 |   Promotion_F1 |    Forum_F1 |   Prose/Lyrical_F1 |   Legal_F1 |
 |:--------------------------------------------------|-----------:|-----------:|---------------------------:|-----------------:|-----------------------------:|---------------:|------------:|-------------------:|-----------:|
