@@ -148,6 +148,230 @@ Number of tokens and types (unique tokens) in training dataset:
 
 None of the results are statistically significant - see results in `calculate_corelation_coefficient.ipynb`.
 
+# Adversarial analysis
+
+Results on y_true and predictions on various variations of the same text - merged results for all languages (all test sets were merged into one dataframe) are in the table below.
+
+The biggest changes in macro F1 scores are in the case of shuffling text (15 points less), removing structural markings (all words that contain digits + punctuation + lowercasing everything - 15 points less), removal of 50% of words (12 points less) and translation (into English - 10 points less).
+
+In terms of genres, the following scenarios incur the highest decreases in F1 scores:
+- News: shuffling (-18 points), removal of all words with capital letters (-12 points), punctuation removal (-11 points), translation (-11 points)
+
+|                                                   |   macro_F1 |    News_F1 |   Opinion/Argumentation_F1 |   Instruction_F1 |   Information/Explanation_F1 |   Promotion_F1 |    Forum_F1 |   Prose/Lyrical_F1 |   Legal_F1 |
+|:--------------------------------------------------|-----------:|-----------:|---------------------------:|-----------------:|-----------------------------:|---------------:|------------:|-------------------:|-----------:|
+| y_pred                                            |  0.854108  |  0.868293  |                  0.77      |        0.846939  |                   0.77512    |     0.84058    |  0.877005   |         0.894472   |  0.960452  |
+| translation-pred                                  |  0.751064  |  0.758893  |                  0.550265  |        0.826667  |                   0.74       |     0.693642   |  0.676471   |         0.875      |  0.887574  |
+| translation-pred-vs-y_pred                        | **-0.103044**  | **-0.109399**  |                 **-0.219735**  |       -0.0202721 |                  -0.0351196  |    **-0.146938**   | **-0.200535**   |        -0.0194724  | -0.072878  |
+| shuffled-text-pred                                |  0.70262   |  0.684492  |                  0.418301  |        0.64      |                   0.669643   |     0.756477   |  0.740741   |         0.845455   |  0.865854  |
+| shuffled-text-pred-vs-y_pred                      | **-0.151487**  | **-0.183801**  |                 **-0.351699**  |       **-0.206939**  |                  **-0.105477**   |    -0.084103   | **-0.136265**   |        -0.0490178  | -0.0945983 |
+| text_no_punct-pred                                |  0.756949  |  0.761905  |                  0.559006  |        0.743902  |                   0.721154   |     0.773585   |  0.74359    |         0.889952   |  0.8625    |
+| text_no_punct-pred-vs-y_pred                      | -0.0971583 | **-0.106388**  |                 **-0.210994**  |       **-0.103036**  |                  -0.0539658  |    -0.0669948  | **-0.133416**   |        -0.00452021 | -0.097952  |
+| text_no_capital-pred                              |  0.771149  |  0.75      |                  0.625     |        0.790698  |                   0.696833   |     0.779487   |  0.772093   |         0.837438   |  0.917647  |
+| text_no_capital_rand-pred                         |  0.825031  |  0.805687  |                  0.732984  |        0.81768   |                   0.739336   |     0.820513   |  0.861878   |         0.904523   |  0.917647  |
+| text_no_capital-pred-vs-y_pred                    | -0.0829581 | **-0.118293**  |                 **-0.145**     |       -0.0562411 |                  -0.078287   |    -0.0610925  | **-0.104912**   |        -0.0570339  | -0.0428049 |
+| text_no_capital-pred-vs-text_no_capital_rand-pred | -0.0538816 | -0.0556872 |                 **-0.107984**  |       -0.0269819 |                  -0.0425039  |    -0.0410256  | -0.0897854  |        -0.0670842  |  0         |
+| text_no_num-pred                                  |  0.818526  |  0.81448   |                  0.726368  |        0.793478  |                   0.753927   |     0.83       |  0.860465   |         0.871287   |  0.898204  |
+| text_no_num_rand-pred                             |  0.836893  |  0.838095  |                  0.714286  |        0.822917  |                   0.78607    |     0.821782   |  0.871508   |         0.897959   |  0.942529  |
+| text_no_num-pred-vs-y_pred                        | -0.0355815 | -0.053813  |                 -0.0436318 |       -0.0534605 |                  -0.0211929  |    -0.0105797  | -0.0165402  |        -0.0231852  | -0.0622484 |
+| text_no_num-pred-vs-text_no_num_rand-pred         | -0.0183671 | -0.0236156 |                  0.0120824 |       -0.0294384 |                  -0.032143   |     0.00821782 | -0.0110433  |        -0.0266721  | -0.0443251 |
+| text_no_structure-pred                            |  0.7015    |  0.708738  |                  0.560976  |        0.666667  |                   0.611111   |     0.727273   |  0.741935   |         0.805825   |  0.789474  |
+| text_no_structure-pred-vs-y_pred                  | **-0.152608**  | **-0.159555**  |                 **-0.209024**  |       **-0.180272**  |                  **-0.164009**   |    **-0.113307**   | **-0.13507**    |        -0.0886471  | **-0.170978**  |
+| text_no_structure-pred-vs-text_no_num_rand-pred   | **-0.135393**  | **-0.129357**  |                 **-0.15331**   |       **-0.15625**   |                  **-0.174959**   |    -0.0945095  | **-0.129573**   |        -0.0921339  | **-0.153055**  |
+| text_random_removal_10-pred                       |  0.826225  |  0.807512  |                  0.720812  |        0.8       |                   0.766169   |     0.81       |  0.877778   |         0.903553   |  0.923977  |
+| text_random_removal_10-pred-vs-y_pred             | -0.0278825 | -0.0607809 |                 -0.0491878 |       -0.0469388 |                  -0.00895046 |    -0.0305797  |  0.00077243 |         0.00908094 | -0.0364754 |
+| text_random_removal_25-pred                       |  0.809962  |  0.790698  |                  0.685393  |        0.793103  |                   0.7343     |     0.84       |  0.860215   |         0.884422   |  0.891566  |
+| text_random_removal_25-pred-vs-y_pred             | -0.0441454 | -0.077595  |                 -0.0846067 |       -0.0538353 |                  -0.0408201  |    -0.00057971 | -0.0167903  |        -0.0100503  | -0.0688857 |
+| text_random_removal_50-pred                       |  0.737277  |  0.740741  |                  0.534091  |        0.6875    |                   0.702703   |     0.744898   |  0.768421   |         0.884422   |  0.835443  |
+| text_random_removal_50-pred-vs-y_pred             | **-0.11683**   | **-0.127552**  |                 **-0.235909**  |       **-0.159439**  |                  -0.0724169  |    -0.0956818  | **-0.108584**   |        -0.0100503  | **-0.125009**  |
+
+## Comparison between y_true and y_pred
+
+If we compare predictions and true labels on the original texts, we can see that Forum is the label that is over-predicted the most (13% more), followed by Instruction (4% more) while Promotion and Information/Explanation are the most under-predicted (Information/Explanation - 9% less).
+
+|                         |   proportion |   count_y_true |   count_y_pred |   change vs y_pred (%) |
+|:------------------------|-------------:|---------------:|---------------:|-----------------------:|
+| Information/Explanation |     0.137975 |            109 |            100 |                9       |
+| Promotion               |     0.135443 |            107 |            100 |                7       |
+| News                    |     0.132911 |            105 |            100 |                5       |
+| Opinion/Argumentation   |     0.126582 |            100 |            100 |                0       |
+| Prose/Lyrical           |     0.125316 |             99 |            100 |               -1       |
+| Legal                   |     0.110127 |             87 |             90 |               -3.33333 |
+| Instruction             |     0.121519 |             96 |            100 |               -4       |
+| Forum                   |     0.110127 |             87 |            100 |              -13       |
+
+## Comparison between predictions on original text and text, translated to English
+
+We compare predictions on original texts and predictions on texts that were machine-translated to English. On English texts, much more texts are predicted to be "News" (almost 50% more) or "Instruction" than the predictions and true labels on original texts, while much less texts are predicted to be Promotion or Forum (almost 50% less).
+
+|                         |   proportion |   count_translation-pred |   count_y_pred |   count_y_true |   change vs y_true (%) |   change vs y_pred (%) |
+|:------------------------|-------------:|-------------------------:|---------------:|---------------:|-----------------------:|-----------------------:|
+| News                    |   0.187342   |                      148 |            100 |            105 |               40.9524  |               48       |
+| Instruction             |   0.163291   |                      129 |            100 |             96 |               34.375   |               29       |
+| Prose/Lyrical           |   0.117722   |                       93 |            100 |             99 |               -6.06061 |               -7       |
+| Legal                   |   0.103797   |                       82 |             90 |             87 |               -5.74713 |               -8.88889 |
+| Information/Explanation |   0.11519    |                       91 |            100 |            109 |              -16.5138  |               -9       |
+| Opinion/Argumentation   |   0.112658   |                       89 |            100 |            100 |              -11       |              -11       |
+| Promotion               |   0.0835443  |                       66 |            100 |            107 |              -38.3178  |              -34       |
+| Forum                   |   0.0620253  |                       49 |            100 |             87 |              -43.6782  |              -51       |
+| Mix                     |   0.0493671  |                       39 |            nan |            nan |              nan       |              nan       |
+| Other                   |   0.00506329 |                        4 |            nan |            nan |              nan       |              nan       |
+
+
+## Comparison between original text and shuffled text
+
+Here, we analyse the impact of removing all syntactic information by shuffling words - only semantic meaning of words remains. We do this in the following manner: we remove the symbols for next line("\n") and shuffle all the words in the text.
+
+Here, many more texts are predicted to be Forum (up to a third) and Prose/Lyrical. This makes sense as in these genres, writers have more freedom in expression and can decide not to follow standard word order rules as strictly as with other genres. The genres which are now predicted much less are Instruction and Opinion/Argumentation. This also makes sense, as the syntax in these two genres is really important - in Instruction, text is organised in chronological steps that need to be followed, and in Opinion/Argumentation, the writer gradually develops his/her argumentation.
+
+|                         |   proportion |   count_shuffled-text-pred |   count_y_pred |   count_y_true |   change vs y_true (%) |   change vs y_pred (%) |
+|:------------------------|-------------:|---------------------------:|---------------:|---------------:|-----------------------:|-----------------------:|
+| Forum                   |    0.163291  |                        129 |            100 |             87 |               48.2759  |                29      |
+| Prose/Lyrical           |    0.153165  |                        121 |            100 |             99 |               22.2222  |                21      |
+| Information/Explanation |    0.14557   |                        115 |            100 |            109 |                5.50459 |                15      |
+| Promotion               |    0.108861  |                         86 |            100 |            107 |              -19.6262  |               -14      |
+| Legal                   |    0.0974684 |                         77 |             90 |             87 |              -11.4943  |               -14.4444 |
+| News                    |    0.103797  |                         82 |            100 |            105 |              -21.9048  |               -18      |
+| Instruction             |    0.0683544 |                         54 |            100 |             96 |              -43.75    |               -46      |
+| Opinion/Argumentation   |    0.0670886 |                         53 |            100 |            100 |              -47       |               -47      |
+| Mix                     |    0.0810127 |                         64 |            nan |            nan |              nan       |               nan      |
+| Other                   |    0.0113924 |                          9 |            nan |            nan |              nan       |               nan      |
+
+
+## Comparison between original text and text with removed punctuation
+
+Here we analyse the impact on the predictions of the removal of punctuations which mark text structure. We remove the symbol for new line "\n" and the following punctuation: [",", ".", "!", "?", ":", "'",  ";", '"', "”", "“", " - ", " – "]. We keep the punctuation that can occur inside words (I'm, two-thirds).
+
+When we remove punctuation, much more texts are predicted to be News (up to a third), and much less texts are predicted to be Forum, Instruction or Opinion/Argumentation (30-40%).
+
+|                         |   proportion |   count_text_no_punct-pred |   count_y_pred |   count_y_true |   change vs y_true (%) |   change vs y_pred (%) |
+|:------------------------|-------------:|---------------------------:|---------------:|---------------:|-----------------------:|-----------------------:|
+| News                    |    0.159494  |                        126 |            100 |            105 |               20       |                26      |
+| Prose/Lyrical           |    0.139241  |                        110 |            100 |             99 |               11.1111  |                10      |
+| Promotion               |    0.132911  |                        105 |            100 |            107 |               -1.86916 |                 5      |
+| Information/Explanation |    0.125316  |                         99 |            100 |            109 |               -9.17431 |                -1      |
+| Legal                   |    0.0924051 |                         73 |             90 |             87 |              -16.092   |               -18.8889 |
+| Forum                   |    0.0873418 |                         69 |            100 |             87 |              -20.6897  |               -31      |
+| Instruction             |    0.0860759 |                         68 |            100 |             96 |              -29.1667  |               -32      |
+| Opinion/Argumentation   |    0.0772152 |                         61 |            100 |            100 |              -39       |               -39      |
+| Mix                     |    0.0848101 |                         67 |            nan |            nan |              nan       |               nan      |
+| Other                   |    0.0151899 |                         12 |            nan |            nan |              nan       |               nan      |
+
+
+## Comparison between original text and text with randomly removed words
+
+Here we analyse what is the impact if we increasingly remove words - we remove 10%, 25% and 50% of words (in random fashion) from each text, and compare the predictions with the original text. We do this by calculating length of each text so obtain the number of words to be removed and then at randomly remove words until we reach this number.
+
+### Removal of 10% of words
+
+There is a slight increase of texts that are predicted to be News (8%) and slight decrease of texts predicted to be Instruction (11%) if we compare the numbers of predictions with the distribution of predictions on original text. If we compare the results with the y_true, the biggest change can be observed with the Information/Explanation label (15% decrease).
+
+
+|                         |   proportion |   count_text_random_removal_10-pred |   count_y_pred |   count_y_true |   change vs y_true (%) |   change vs y_pred (%) |
+|:------------------------|-------------:|------------------------------------:|---------------:|---------------:|-----------------------:|-----------------------:|
+| News                    |   0.136709   |                                 108 |            100 |            105 |                2.85714 |                8       |
+| Prose/Lyrical           |   0.124051   |                                  98 |            100 |             99 |               -1.0101  |               -2       |
+| Opinion/Argumentation   |   0.122785   |                                  97 |            100 |            100 |               -3       |               -3       |
+| Legal                   |   0.106329   |                                  84 |             90 |             87 |               -3.44828 |               -6.66667 |
+| Forum                   |   0.117722   |                                  93 |            100 |             87 |                6.89655 |               -7       |
+| Promotion               |   0.117722   |                                  93 |            100 |            107 |              -13.0841  |               -7       |
+| Information/Explanation |   0.116456   |                                  92 |            100 |            109 |              -15.5963  |               -8       |
+| Instruction             |   0.112658   |                                  89 |            100 |             96 |               -7.29167 |              -11       |
+| Mix                     |   0.0417722  |                                  33 |            nan |            nan |              nan       |              nan       |
+| Other                   |   0.00379747 |                                   3 |            nan |            nan |              nan       |              nan       |
+
+### Removal of 25% of words
+
+The results are similar as with the removal of 10% of words. Interestingly, now, there is a rather big decrease of texts that are predicted to be Opinion/Argumentation or Instruction (around 20%). If we compare with the distribution of y_true, there is an increase of 13% of texts that are predicted to be Forum which makes sense, as these texts can be written in non-standard language and can have some parts of the sentences missing. In contrast, there is a decrease of texts predicted to be Information/Explanation and Promotion.
+
+|                         |   proportion |   count_text_random_removal_25-pred |   count_y_pred |   count_y_true |   change vs y_true (%) |   change vs y_pred (%) |
+|:------------------------|-------------:|------------------------------------:|---------------:|---------------:|-----------------------:|-----------------------:|
+| News                    |   0.139241   |                                 110 |            100 |            105 |                 4.7619 |                10      |
+| Prose/Lyrical           |   0.126582   |                                 100 |            100 |             99 |                 1.0101 |                 0      |
+| Forum                   |   0.125316   |                                  99 |            100 |             87 |                13.7931 |                -1      |
+| Information/Explanation |   0.124051   |                                  98 |            100 |            109 |               -10.0917 |                -2      |
+| Promotion               |   0.117722   |                                  93 |            100 |            107 |               -13.0841 |                -7      |
+| Legal                   |   0.1        |                                  79 |             90 |             87 |                -9.1954 |               -12.2222 |
+| Instruction             |   0.0987342  |                                  78 |            100 |             96 |               -18.75   |               -22      |
+| Opinion/Argumentation   |   0.0987342  |                                  78 |            100 |            100 |               -22      |               -22      |
+| Mix                     |   0.0620253  |                                  49 |            nan |            nan |               nan      |               nan      |
+| Other                   |   0.00759494 |                                   6 |            nan |            nan |               nan      |               nan      |
+
+### Removal of 50% of words
+
+If we remove 50% of words, there is a big decrease of text predicted to be Instruction (36% less), Opinion/Argumentation and Legal (around 20% less). If we compare the results with the y_pred, there is a large increase of texts predicted to be Forum (which isn't shown if we compare the distribution of y_pred.)
+
+|                         |   proportion |   count_text_random_removal_50-pred |   count_y_pred |   count_y_true |   change vs y_true (%) |   change vs y_pred (%) |
+|:------------------------|-------------:|------------------------------------:|---------------:|---------------:|-----------------------:|-----------------------:|
+| Information/Explanation |    0.143038  |                                 113 |            100 |            109 |                3.66972 |                13      |
+| News                    |    0.140506  |                                 111 |            100 |            105 |                5.71429 |                11      |
+| Forum                   |    0.13038   |                                 103 |            100 |             87 |               18.3908  |                 3      |
+| Prose/Lyrical           |    0.126582  |                                 100 |            100 |             99 |                1.0101  |                 0      |
+| Promotion               |    0.112658  |                                  89 |            100 |            107 |              -16.8224  |               -11      |
+| Legal                   |    0.0898734 |                                  71 |             90 |             87 |              -18.3908  |               -21.1111 |
+| Opinion/Argumentation   |    0.0962025 |                                  76 |            100 |            100 |              -24       |               -24      |
+| Instruction             |    0.0810127 |                                  64 |            100 |             96 |              -33.3333  |               -36      |
+| Mix                     |    0.0696203 |                                  55 |            nan |            nan |              nan       |               nan      |
+| Other                   |    0.0101266 |                                   8 |            nan |            nan |              nan       |               nan      |
+
+
+## Comparison between original text with randomly removed words and text where all word with capitalized letters are removed
+
+Here we investigate what is the impact of removing all words that have capitalized letters in them. Since this also changes text length, we do not compare the results with the results of the original texts, but for each text also randomly remove the same amount of words as were removed due to being capitalized, to compare the results with the results of the texts with randomly removed same number of words.
+
+Interestingly, there is no change in Promotion and Legal. If we remove all words that have capitalized letters (and we compare the predictions with the predictions to texts where the same number of random words were removed), much more text are predicted to be Forum (36%). This makes sense, since people on Forums use non-standard language and often do not use capitalization. At the same time, much less texts are predicted to be News (25% less) which also makes sense, as News are often focused on people and places (which are capitalized).
+
+|                         |   proportion |   count_text_no_capital-pred |   count_no_capital_rand |   count_y_true |   change vs y_true (%) |   change vs no_capital_rand (%) |
+|:------------------------|-------------:|-----------------------------:|------------------------:|---------------:|-----------------------:|--------------------------------:|
+| Forum                   |   0.162025   |                          128 |                      94 |             87 |               47.1264  |                        36.1702  |
+| Information/Explanation |   0.141772   |                          112 |                     102 |            109 |                2.75229 |                         9.80392 |
+| Mix                     |   0.0518987  |                           41 |                      38 |            nan |              nan       |                         7.89474 |
+| Prose/Lyrical           |   0.131646   |                          104 |                     100 |             99 |                5.05051 |                         4       |
+| Promotion               |   0.111392   |                           88 |                      88 |            107 |              -17.757   |                         0       |
+| Legal                   |   0.105063   |                           83 |                      83 |             87 |               -4.5977  |                         0       |
+| Other                   |   0.00379747 |                            3 |                       3 |            nan |              nan       |                         0       |
+| Instruction             |   0.0962025  |                           76 |                      85 |             96 |              -20.8333  |                       -10.5882  |
+| Opinion/Argumentation   |   0.0962025  |                           76 |                      91 |            100 |              -24       |                       -16.4835  |
+| News                    |   0.1        |                           79 |                     106 |            105 |              -24.7619  |                       -25.4717  |
+
+## Comparison between original text with randomly removed words and texts with removed numbers
+
+Here we analyse the impact of removing words that contain one or more digits. As with the impact of removing capitalized words, we also prepare texts that have the same number of words removed, but choosing random words to remove, and compare the results of this sample with the results of texts with removed numbers.
+
+Interestingly, when we remove numbers, but also when we remove random words, more texts were predicted to be "Mix". There is also a slight increase (10%) in prediction of News, and slight decrease in prediction of Information/Explanation, Instruction, Legal and Forum, but the numbers are not large in any direction.
+
+|                         |   proportion |   count_text_no_num-pred |   count_no_num_rand |   count_y_true |   change vs y_true (%) |   change vs no_num_rand (%) |
+|:------------------------|-------------:|-------------------------:|--------------------:|---------------:|-----------------------:|----------------------------:|
+| Mix                     |   0.0506329  |                       40 |                  28 |            nan |              nan       |                    42.8571  |
+| News                    |   0.146835   |                      116 |                 105 |            105 |               10.4762  |                    10.4762  |
+| Prose/Lyrical           |   0.13038    |                      103 |                  97 |             99 |                4.0404  |                     6.18557 |
+| Opinion/Argumentation   |   0.127848   |                      101 |                  96 |            100 |                1       |                     5.20833 |
+| Other                   |   0.00253165 |                        2 |                   2 |            nan |              nan       |                     0       |
+| Promotion               |   0.117722   |                       93 |                  95 |            107 |              -13.0841  |                    -2.10526 |
+| Forum                   |   0.107595   |                       85 |                  92 |             87 |               -2.29885 |                    -7.6087  |
+| Legal                   |   0.101266   |                       80 |                  87 |             87 |               -8.04598 |                    -8.04598 |
+| Instruction             |   0.111392   |                       88 |                  96 |             96 |               -8.33333 |                    -8.33333 |
+| Information/Explanation |   0.103797   |                       82 |                  92 |            109 |              -24.7706  |                   -10.8696  |
+
+## Comparison between original text with removed structural information and texts with removed numbers
+
+Here, we start from the text with removed numbers and go further with removal of structural information: we also remove punctuation and lowercase all letters. We then compare the results with the results of the sample with randomly removed words (same number of words removed as the number of removed numbers in the other sample).
+
+Interestingly, as we remove numbers, punctuation and lowercase words, there is a large amount of texts that are now predicted as "Other" or "Mix". Promotion, Prose/Lyrical and Forum are now more frequently predicted (Promotion - 30% more), while Information/Explanation, Legal, Opinion/Argumentation and Instruction are predicted significantly less often, with the Instruction predicted almost 45% less often.
+
+|                         |   proportion |   count_text_no_structure-pred |   count_no_num_rand |   count_y_true |   change vs y_true (%) |   change vs no_num_rand (%) |
+|:------------------------|-------------:|-------------------------------:|--------------------:|---------------:|-----------------------:|----------------------------:|
+| Other                   |    0.0151899 |                             12 |                   2 |            nan |              nan       |                   500       |
+| Mix                     |    0.117722  |                             93 |                  28 |            nan |              nan       |                   232.143   |
+| Promotion               |    0.156962  |                            124 |                  95 |            107 |               15.8879  |                    30.5263  |
+| Prose/Lyrical           |    0.135443  |                            107 |                  97 |             99 |                8.08081 |                    10.3093  |
+| Forum                   |    0.125316  |                             99 |                  92 |             87 |               13.7931  |                     7.6087  |
+| News                    |    0.127848  |                            101 |                 105 |            105 |               -3.80952 |                    -3.80952 |
+| Information/Explanation |    0.0898734 |                             71 |                  92 |            109 |              -34.8624  |                   -22.8261  |
+| Legal                   |    0.0822785 |                             65 |                  87 |             87 |              -25.2874  |                   -25.2874  |
+| Opinion/Argumentation   |    0.0810127 |                             64 |                  96 |            100 |              -36       |                   -33.3333  |
+| Instruction             |    0.0683544 |                             54 |                  96 |             96 |              -43.75    |                   -43.75    |
+
+
 # Results from old data (not cleaned)
 
 Here are the results of the experiments performed on the old data -- where English and other non-target language paragraphs were not removed yet. I did not do these evaluations on the new, cleaned data, as I won't include these test to the final paper.
