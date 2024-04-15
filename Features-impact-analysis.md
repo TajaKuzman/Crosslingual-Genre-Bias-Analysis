@@ -192,7 +192,16 @@ In terms of genres, the following scenarios incur the highest decreases in F1 sc
 | text_random_removal_50-pred-vs-y_pred             | **-0.11683**   | **-0.127552**  |                 **-0.235909**  |       **-0.159439**  |                  -0.0724169  |    -0.0956818  | **-0.108584**   |        -0.0100503  | **-0.125009**  |
 
 Analysis of the impact of adversarial attacks based on the macro F1 scores for each language - the attacks with the highest impact:
-- MT: shuffling word order (-21 points), punctuation removal (-18 points), word with capital letters removal (-31 points), removal of structural markings (-32 points)
+- MT: removal of structural markings (-32 points),  word with capital letters removal (-31 points), shuffling word order (-21 points), removal of 50% of words (-20 points), punctuation removal (-18 points), removal of 10% of words (-10 points), removal of 25% of words (-14 points)
+- EL: shuffling (-21 points), translation (-18 points), punctuation removal (-15 points), removal of structural markings (-12 points), removal of 50% of words (-12 points), number removal (-11 points)
+- TR: removal of 50% of words (-13 points), shuffling (-11 points), removal of structural markings (-10 points)
+- SQ: removal of 50% of words (-15 points), punctuation removal (-13 points), shuffling (-12 points), removal of structural markings (-12 points), translation (-11 points)
+- IS: translation (-15 points)
+- UK: shuffling (-24 points), removal of structural markings (-21 points), translation (-17 points), removal of 50% of words (-15 points), punctuation removal (-12 points)
+- CA: none of the interventions led to 10 or more points decrease. Biggest impact: shuffling, removal of structural markings, removal of 50% of words (9 points)
+- MK: removal of structural markings (-26 points), shuffling (-25 points), removal of 50% of words (-18 points), removal of punctuation (-16 points), translation (-15 points), removal of words with capitalized letters (-13 points)
+- HR: shuffling (-12 points), removal of structural markings (-10 points), removal of 50% of words (-10 points)
+- SL: removal of structural markings (-22 points), translation (-16 points), shuffling (-14 points), punctuation removal (-13 points), removal of 50% of words (-11 points)
 
 |                                                   |         mt |           el |          tr |          sq |          is |          uk |         ca |         mk |          hr |          sl |
 |:--------------------------------------------------|-----------:|-------------:|------------:|------------:|------------:|------------:|-----------:|-----------:|------------:|------------:|
