@@ -419,3 +419,15 @@ The reasons for the differences:
 So we can see that the improved methodology (better shown texts, using doccano and paragraph structure) improved annotation of 17 cases - 6% of all texts (either we were able to annotate texts that were previously incomprehensible, or we detected problematic texts that we previously didn't due to the lacking text structure).
 
 In 23 instances (9%), there was inter-annotator disagreement, which shows the level of difficulty of this task. However, 8 of these cases appeared when annotating texts that were predicted as "Other", which we decided that we won't include in the annotation campaign anyway. If we disregard these cases, disagreement happened in 15 instances - 6% of texts.
+
+|                            |   translation |   word order |   text structure |   50% words removal |
+|:---------------------------|--------------:|-------------:|-----------------:|--------------------:|
+| macro_F1                   |     -13.901   |    -16.6631  |        -13.8073  |           -12.9245  |
+| Instruction_F1             |      -5.42588 |    -18.4241  |        -12.4052  |           -12.7722  |
+| Forum_F1                   |     -25.9625  |    -14.5998  |        -12.9499  |           -12.8476  |
+| Opinion/Argumentation_F1   |     -29.1342  |    -44.9631  |        -21.3713  |           -30.7817  |
+| Prose/Lyrical_F1           |      -6.04474 |     -6.8505  |         -5.74713 |            -1.65945 |
+| Legal_F1                   |      -7.58789 |     -9.84935 |        -16.2388  |           -13.0156  |
+| Promotion_F1               |     -15.293   |     -7.5402  |         -9.06795 |            -9.39211 |
+| News_F1                    |     -17.8899  |    -19.6108  |        -12.522   |           -14.2098  |
+| Information/Explanation_F1 |      -4.72316 |    -14.3505  |        -21.6438  |           -10.4084  |
